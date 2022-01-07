@@ -10,3 +10,4 @@ class thread_function:
         self.thread = threading.Thread(target=self.function, args=args, daemon=True)
         self.thread.start()
         return self
+
