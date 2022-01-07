@@ -13,7 +13,7 @@ def fallback_server(event, request, connection, address):
         return web.response(200, 'OK', {'Server': 'jaobernardi/backend'}, parsed)
     except:
         logging.error("Failed to meet demands.")
-        return web.response(500, 'Internal Server Error', {'Server': 'jaobernardi/backend'}, parsed)
+        return web.response(500, 'Internal Server Error', {'Server': 'jaobernardi/backend'}, b"")
 
 def main():
     server = web.Server()
