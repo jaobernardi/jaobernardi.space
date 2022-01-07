@@ -1,4 +1,4 @@
-from therepublic import web
+from scripts import web
 import logging
 import pyding
 
