@@ -88,7 +88,7 @@ class Server:
                 data += new_data
         
             request = Request(data, acknowledge=datetime.now())
-            event = pyding.call("http_request", request=request, connection=conn, address=addr)
+            event = pyding.call("http_request", first_response=True, request=request, connection=conn, address=addr)
             pyding.call("http_response", request=request, resp=event.response.decode('utf-8'))
             
             if event.response:
