@@ -61,7 +61,7 @@ class Server:
             except ssl.SSLError:
                 pass
             except KeyboardInterrupt:
-                sock.shutdown()
+                sock.close()
                 break
             except Exception as e:
                 logging.error(f"Error whilst handling request ({e})")
