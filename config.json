@@ -4,7 +4,7 @@
     },
     "web": {
         "host": "0.0.0.0",
-        "port": 1025,
+        "port": 443,
         "https": false,
         "https_certificate": null,
         "database": "database/budget.sql"
