@@ -1,6 +1,11 @@
 from space import web
 import logging
 import pyding
+import os
+import importlib
+
+
+server_modules = []
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,9 +20,17 @@ def fallback_server(event, request, connection, address):
         logging.error("Failed to meet demands.")
         return web.response(500, 'Internal Server Error', {'Server': 'jaobernardi/backend'}, b"")
 
+
+def load_servers():
+    for handle in os.listdir("servers"):
+        handle = __import__("server."+handle)
+        server_modules.append(handle)
+
+
 def main():
     server = web.Server()
     server.run()
+    load_servers()
 
 if __name__ == "__main__":
     main()
