@@ -15,4 +15,4 @@ def api(event, request, connection, address):
 
 
         parsed_output = json.dumps(output)
-        return web.response(200, 'No content', {'Server': 'jaobernardi/backend'}, parsed_output.encode("utf-8"))
+        return web.response(200, 'No content', {'Server': 'jaobernardi/backend', 'Content-Type': 'application/json'}, parsed_output.encode("utf-8"))
