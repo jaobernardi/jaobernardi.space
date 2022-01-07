@@ -40,7 +40,7 @@ class Server:
         if self.config.web.https:
             logging.info("Passing socket to event loop as https")
             self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            self.context.load_cert_chain(self.config.web.certificate, self.config.web.private_key)
+            self.context.load_cert_chain(self.config.web.credentials.certificate, self.config.web.credentials.private_key)
             with self.context.wrap_socket(self.socket, server_side=True) as sock:
                 self.http_loop(sock)
         else:
