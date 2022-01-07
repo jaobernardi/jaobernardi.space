@@ -9,7 +9,7 @@ server_modules = []
 
 logging.basicConfig(level=logging.INFO)
 
-@pyding.on("http_request", priority=10)
+@pyding.on("http_request", priority=-10)
 def fallback_server(event, request, connection, address):
     file = open("html_test.htm", "rb")
     contents = file.read()
@@ -23,14 +23,16 @@ def fallback_server(event, request, connection, address):
 
 def load_servers():
     for handle in os.listdir("servers"):
-        handle = __import__("server."+handle)
-        server_modules.append(handle)
+        if handle.endswith(".py"):            
+            handle = __import__("servers."+handle.removesuffix(".py"))
+            server_modules.append(handle)
 
 
 def main():
+    load_servers()
     server = web.Server()
     server.run()
-    load_servers()
+    
 
 if __name__ == "__main__":
     main()
