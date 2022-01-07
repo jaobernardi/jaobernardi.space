@@ -1,0 +1,21 @@
+{
+    "budget": {
+        "database": "database/budget.sql"
+    },
+    "web": {
+        "host": "0.0.0.0",
+        "port": 1025,
+        "https": false,
+        "https_certificate": null,
+        "database": "database/budget.sql"
+    },
+    "notafiscal": {
+        "database": "database/notafiscal.sql"
+    },
+    "logging": {
+        "database": "database/log.sql"
+    },
+    "backups": {
+        "period": 300
+    }
+}
