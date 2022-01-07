@@ -9,6 +9,8 @@
 <body>
 <div id="application">
 <python>
+if "crash" in request.query_string:
+    raise Exception()
 this.echo("p", "Hello world!", {})
 </python>
 </div>
