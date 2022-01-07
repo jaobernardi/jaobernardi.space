@@ -18,7 +18,7 @@ def fallback_server(event, request, connection, address):
         return web.response(200, 'OK', {'Server': 'jaobernardi/backend'}, parsed)
     except:
         logging.error("Failed to meet demands.")
-        file = open("web/error.htm", "rb")
+        file = open("web/error.html", "rb")
         parsed = web.eval_document(contents, {"request": request, "address": address, "code": 500, "text": "Internal Server Error"}).encode("utf-8")
         return web.response(500, 'Internal Server Error', {'Server': 'jaobernardi/backend'}, parsed)
 
