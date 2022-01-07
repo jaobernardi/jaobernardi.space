@@ -8,6 +8,6 @@ print(":)")
 
 @pyding.on("http_request")
 def api(event, request, connection, address):
-    print(":)", request.headers)
     if "Host" in request.headers and request.headers["Host"] == "api.jaobernardi.space":
+        print("found")
         return web.response(201, 'No content', {'Server': 'jaobernardi/backend'}, b"")
