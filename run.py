@@ -9,7 +9,7 @@ server_modules = []
 
 logging.basicConfig(level=logging.INFO)
 
-@pyding.on("http_request", priority=-10)
+@pyding.on("http_request", priority=10)
 def fallback_server(event, request, connection, address):
     file = open("html_test.htm", "rb")
     contents = file.read()
