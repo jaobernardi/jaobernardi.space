@@ -60,9 +60,12 @@ class Server:
             # Ignore SSL errors
             except ssl.SSLError:
                 pass
+            except KeyboardInterrupt:
+                sock.shutdown()
+                break
             except Exception as e:
                 logging.error(f"Error whilst handling request ({e})")
-
+    
     @thread_function
     def request(self, conn, addr):
         data = b""
