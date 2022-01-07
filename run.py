@@ -1,4 +1,4 @@
-from scripts import web
+from space import web
 import logging
 import pyding
 
