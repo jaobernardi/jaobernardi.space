@@ -5,8 +5,11 @@
     "web": {
         "host": "0.0.0.0",
         "port": 443,
-        "https": false,
-        "https_certificate": null,
+        "https": true,
+        "credentials": {
+            "certificate": "/etc/letsencrypt/live/jaobernardi.space/fullchain.pem",
+            "private_key": "/etc/letsencrypt/live/jaobernardi.space/privkey.pem"
+        },
         "database": "database/budget.sql"
     },
     "notafiscal": {
