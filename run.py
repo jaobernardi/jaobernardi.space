@@ -19,7 +19,7 @@ def fallback_server(event, request, connection, address):
 
     if "Host" in request.headers and request.headers["Host"] == config.web.scopes.home:
         default_headers = {"Server": "jspaces/1.0"}
-        path = os.path.join("web_assets/", request.path.removeprefix("/"))
+        path = os.path.join("web/", request.path.removeprefix("/"))
 
         if ".." in path:
             error_parsed = web.eval_document(error_contents, {"request": request, "address": address, "code": 403, "text": "Unauthorized"}).encode("utf-8")
