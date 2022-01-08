@@ -26,6 +26,12 @@ class Node(object):
         else:
             super().__setattr__(name, value)
 
+    def __getitem__(self, *args, **kwargs):
+        return self._original_dict.__getitem__(*args, **kwargs)
+
+    def __iter__(self):
+        return self._original_dict.__iter__()
+
     def __repr__(self):
         return self._original_dict.__repr__()
 
