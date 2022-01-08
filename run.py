@@ -17,7 +17,7 @@ def fallback_server(event, request, connection, address):
     error_file = open("web/error.html", "rb")
     error_contents = error_file.read()    
 
-    if "Host" in request.headers and request.headers["Host"] == config.web.scopes["home"]:
+    if "Host" in request.headers and request.headers["Host"] == config.web.scopes.home:
         default_headers = {"Server": "jspaces/1.0"}
         path = os.path.join("web_assets/", request.path.removeprefix("/"))
 
