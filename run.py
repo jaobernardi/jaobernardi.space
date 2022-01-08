@@ -41,7 +41,7 @@ def fallback_server(event, request, connection, address):
         
         data = open(filename, 'rb').read()
         prefix = os.path.basename(filename).split(".")[-1]
-        if prefix in config.mime_types.mime_types:
+        if prefix in config.mime_types:
             default_headers['Content-Type'] = config.mime_types[prefix]
         data = web.eval_document(data, {"request": request, "address": address}).encode("utf-8")
         
