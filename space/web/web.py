@@ -1,7 +1,9 @@
+import sys
 import ssl
 import pyding
 import socket
 import logging
+import traceback
 
 from ..config import Config
 from datetime import datetime
@@ -31,8 +33,9 @@ class Server:
         # Initialize the socket
         logging.info(f"Binding to {self.config.web.host}:{self.config.web.port}")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.config.web.host, self.config.web.port))
-        self.socket.listen(1000)
+        self.socket.listen()
         
         self.running = True
 
@@ -50,6 +53,7 @@ class Server:
 
     def http_loop(self, sock):
         logging.info("Spinning event loop up.")
+        sock.settimeout(10)
         while True:
             try:
                 # Accept connection
@@ -58,45 +62,54 @@ class Server:
                 # Route connection to thread
                 self.request(self, conn, addr)
             # Ignore SSL errors
-            except ssl.SSLError:
+            except ssl.SSLError or socket.timeout:
                 pass
             except KeyboardInterrupt:
                 sock.close()
                 break
             except Exception as e:
-                logging.error(f"Error whilst handling request ({e})")
+                logging.error(f"Error whilst handling request ({e})")                
     
-    @thread_function
-    def request(self, conn, addr):
+    def read_from_client(self, conn, addr):
         data = b""
         headers = {}
+        while True:
+            if b"\r\n\r\n" in data:
+                for line in data.split(b"\n")[1:]:
+                    headers[line.split(b": ")[0].decode('utf-8')] = b"".join(line.split(b": ")[1:]).decode('utf-8')
+                if "Content-Length" in headers:
+                    body = b"\r\n\r\n".join(data.split(b"\r\n\r\n")[1:])
+                    if len(body) >= int(headers["Content-Length"]):
+                        break
+                else:
+                    break
+            new_data = conn.recv(1)
+            if not new_data:
+                break
+            data += new_data
+
+        return data, headers
+
+    @thread_function
+    def request(self, conn, addr):
+
+        data, headers = self.read_from_client(conn, addr)
 
         try:
-            while True:
-                if b"\r\n\r\n" in data:
-                    for line in data.split(b"\n")[1:]:
-                        headers[line.split(b": ")[0].decode('utf-8')] = b"".join(line.split(b": ")[1:]).decode('utf-8')
-                    if "Content-Length" in headers:
-                        body = b"\r\n\r\n".join(data.split(b"\r\n\r\n")[1:])
-                        if len(body) >= int(headers["Content-Length"]):
-                            break
-                    else:
-                        break
-                new_data = conn.recv(1)
-                if not new_data:
-                    break
-                data += new_data
-        
+
             request = Request(data, acknowledge=datetime.now())
             event = pyding.call("http_request", first_response=True, request=request, connection=conn, address=addr)
-            pyding.call("http_response", request=request, resp=event.response.decode('utf-8'))
+            pyding.call("http_response", request=request, resp=event.response)
             
             if event.response:
                 conn.send(event.response)
 
         except Exception as e:
+            logging.debug(f"==============================[ ERROR ]==============================") 
             logging.error(f"Error whilst reading client data ({addr} - {e})")
-
+            logging.debug(traceback.format_exc())
+            logging.debug(f"======================================================================") 
+            
         conn.close()
 
 
