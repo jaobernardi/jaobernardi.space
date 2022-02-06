@@ -4,29 +4,23 @@
     },
     "web": {
         "host": "0.0.0.0",
-        "port": 443,
-        "https": true,
+        "port": 1280,
+        "https": false,
         "credentials": {
             "certificate": "/etc/letsencrypt/live/jaobernardi.space/fullchain.pem",
             "private_key": "/etc/letsencrypt/live/jaobernardi.space/privkey.pem"
         },
         "database": "database/budget.sql",
         "scopes": {
-            "home": "jaobernardi.space",
+            "home": "localhost",
             "api": "api.jaobernardi.space"
         },
         "experimental": {
-            "ranges": true
+            "ranges": false
         }
     },
-    "notafiscal": {
-        "database": "database/notafiscal.sql"
-    },
-    "logging": {
-        "database": "database/log.sql"
-    },
-    "backups": {
-        "period": 300
+    "auth": {
+        "database": "database/auth.sql"
     },
     "mime_types": {
         "123": "application/vnd.lotus-1-2-3",
