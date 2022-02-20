@@ -1,15 +1,8 @@
 from lib import web
-import pyding
-
-
-# Handle http requests
-@pyding.on("http_request")
-def responder(event, request):
-    # Always return 200 OK
-    return web.Response(200, "OK", data=request.data)
 
 
 def main():
+    __import__("handlers.home")
     # Setup server
     server = web.Server("127.0.0.1", 1220)
     server.spin_up()
