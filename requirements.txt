@@ -1,2 +1,2 @@
-pyding
+pyding>=1.1.0
 beautifulsoup4
