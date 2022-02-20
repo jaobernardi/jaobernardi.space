@@ -78,9 +78,10 @@ class Request:
             if " " in line and index == 0:
                 self.method, *other = line.split(" ")
                 self.path = other[0] if other else ""
-                if "?" in self.path and "=" in self.path:
-                    self.query_string = "?".join(self.path.split("?")[1:])
-                    self.path = self.path.split("?")[0]                    
+                self.path = self.path.split("?")[0]
+                if "?" in other[0] and "=" in other[0]:
+                    self.query_string = "?".join(other[0].split("?")[1:])
+                                       
                     self.query_string = {k: v for k, v in [i.split("=") for i in self.query_string.split("&")]}
 
             elif index > 0:
