@@ -73,6 +73,7 @@ class Request:
 
         index = 0
         head, *body = self.raw_data.split(b"\r\n\r\n")
+        # TODO: Rewrite this bit
         for line in head.split(b"\r\n"):
             line = line.decode("utf-8")
             if " " in line and index == 0:
@@ -125,7 +126,7 @@ class Server:
 
         # Setup socket
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.host, self.port))
         self.socket.listen()
 
