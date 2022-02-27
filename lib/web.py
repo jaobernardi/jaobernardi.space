@@ -11,7 +11,7 @@ class Client:
         self.address = address
     
     def send_data(self, data):
-        return #TODO: implement this thing here
+        return self.connection.send(data, )
 
     def read_data(self):
         # Init the request
@@ -27,13 +27,17 @@ class Client:
             request.append_raw_data(new_data)
         # Process the request
         self.process_data(request)
+        self.close_connection()
+
+    def close_connection(self):
+        self.connection.close()
 
     def process_data(self, data):
         event = pyding.call("http_request", request=data)
         if event.response:
             for content in event.response.output():
-                self.connection.send(content)
-        self.connection.close()
+                self.send_data(content)
+        
 
 
 class Response:
