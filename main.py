@@ -2,9 +2,8 @@ from lib import web, utils
 
 
 def main():
-    __import__("handlers.home")
     # Setup server
-    server = web.Server("0.0.0.0", 1220)
+    server = web.Server("0.0.0.0", 1025)
     server.spin_up()
 
 
