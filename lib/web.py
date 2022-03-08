@@ -89,7 +89,7 @@ class Request:
         self.headers = {}
         self.data = None
         self.complete = False
-
+        print(self.raw_data)
         index = 0
         head, *body = self.raw_data.split(b"\r\n\r\n")
         # TODO: Rewrite this bit
