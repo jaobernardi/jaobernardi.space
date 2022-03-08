@@ -1,13 +1,13 @@
-from lib import web, utils, relay
+from lib import web, utils, relay, config
 import threading
 
 def main():
     # Setup server
-    relay_server = relay.RelayServer("0.0.0.0", 1026)
+    relay_server = relay.RelayServer(**config.get_relay())
     thread = threading.Thread(target=relay_server.spin_up, daemon=True)
     thread.start()
 
-    server = web.HTTPServer("0.0.0.0", 1025)
+    server = web.HTTPServer(config.get_web())
     server.spin_up()
 
 

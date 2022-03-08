@@ -1,6 +1,6 @@
 from email import message
 import json
-from lib import web
+from lib import web, config
 import pyding
 import base64
 import hashlib
@@ -12,11 +12,15 @@ def client_deny(event: pyding.EventCall, client):
 
 @pyding.on("http_request")
 def api_route(event, request: web.Request):
-    match request.path.split("/")[1:]:
-        case ["relay"]:
-            pyding.call("relay_broadcast", message=request.raw_data)
-            out = {"status": 200, "http_message": "OK", "message": "Relayed."}
+    match request.path.split("/")[1:] if request.path else "":
+        case ["crc"]:
+            sha256_hash_digest = hmac.new(config.get_user_token().encode("utf-8"), msg=request.query_string['crc_token'].encode("utf-8"), digestmod=hashlib.sha256).digest()
+            out = {"status": 200, "http_message": "OK", "response_token": 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")}
 
+        case ["relay"]:
+            out = {"status": 200, "http_message": "OK", "message": "Relayed."}
+            pyding.call("relay_broadcast", message=request.raw_data)
+            
         case ["acervo", *extra]:
             out = {"status": 501, "http_message": "OK", "message": "Not Implemented."}
        

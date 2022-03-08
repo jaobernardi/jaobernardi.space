@@ -1,6 +1,7 @@
 from .web import Server
 import pyding
-import socket, threading
+import threading
+
 
 class RelayClient:
     def __init__(self, connection, address):
@@ -11,18 +12,14 @@ class RelayClient:
         self.connection.send(data)
 
     def read_data(self):
-        data = b""
         while True:
-            new_data = self.connection.recv(1024)
-            if not new_data or data.endswith(b"\n\n"): break
-            data += new_data
-        self.handle_data(data)
+            data = self.connection.recv(1024)
+            if not data or data.endswith(b"\n\n"): break
+            self.handle_data(data)
+        self.connection.close()
 
     def handle_data(self, data):
-        print(data)
-        if data == b"keep-alive":
-            print("is-keep-alive")
-            self.send_data(b"keep-alive")
+        return
 
 
 class RelayServer(pyding.EventSupport, Server):
@@ -50,12 +47,3 @@ class RelayServer(pyding.EventSupport, Server):
     @pyding.on("relay_broadcast")
     def event_broadcast(self, event, message):
         self.broadcast(message)
-
-
-def client_test(h, p):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((h, p))        
-        while True:
-            data = s.recv(1024)
-            print('Received', data)
-            s.send(b"keep-alive")
