@@ -7,7 +7,7 @@ def main():
     thread = threading.Thread(target=relay_server.spin_up, daemon=True)
     thread.start()
 
-    server = web.HTTPServer(config.get_web())
+    server = web.HTTPServer(**config.get_web())
     server.spin_up()
 
 
