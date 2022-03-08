@@ -5,13 +5,18 @@ from threading import Thread
 
 
 class Client:
-    def __init__(self, connection, address):
-        # placeholder
+    """
+    Client
+    ------
+    A simple wrapper for socket clients for http processing.
+    """
+    def __init__(self, connection, address, server):
+        self.server = server
         self.connection = connection
         self.address = address
     
     def send_data(self, data):
-        return self.connection.send(data, )
+        return self.connection.send(data)
 
     def read_data(self):
         # Init the request
@@ -37,10 +42,15 @@ class Client:
         if event.response:
             for content in event.response.output():
                 self.send_data(content)
-        
+        self.close_connection()
 
 
 class Response:
+    """
+    Response
+    --------
+    A simple http response parsing.
+    """
     def __init__(self, status_code, status_message, headers={}, data=b""):
         self.status_code = status_code
         self.status_message = status_message
@@ -63,6 +73,11 @@ class Response:
 
 
 class Request:
+    """
+    Response
+    --------
+    A simple http response forgery.
+    """
     def __init__(self, raw_data: bytes = b""):
         self.raw_data = raw_data
         self.parse_raw_data()
@@ -113,33 +128,61 @@ class Server:
     """
         Server
         ------
-        A simple http server.
+        A simple server.
     """
-    def __init__(self, host: str, port: int, private_key: str = "", chain: str = "", use_https: bool = False):
+    def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
-        self.private_key = private_key
-        self.chain = chain
-        self.use_https = use_https
         self.running = False
 
-    def spin_up(self):
-        if self.use_https:
-            # TODO: Implement HTTPS stuff etc etc
-            raise NotImplemented("Socket ssl wrapping not implemented.")
+    def stop(self):
+        self.socket.close()
+        self.running = False
 
+    def setup_socket(self):
         # Setup socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return sock
+
+    def spin_up(self):
+        self.socket = self.setup_socket()
         self.socket.bind((self.host, self.port))
         self.socket.listen()
-
-        # Pass to the main loop
         self.running = True
+        # Pass to the main loop
         self.run()
+
+    def handle_connection(self, connection, address):
+        connection.close()
 
     def run(self):
         while self.running:
-            client = Client(*self.socket.accept())
+           self.handle_connection(*self.socket.accept())
+            
+
+class HTTPServer(Server):
+    """
+    HTTPServer
+    ----------
+    A Simple http server.
+    """
+    def __init__(self, host: str, port: int, private_key: str = "", chain: str = "", use_https: bool = False):
+        super().__init__(host, port)
+        self.private_key = private_key
+        self.chain = chain
+        self.use_https = use_https
+    
+    def setup_socket(self):
+        if self.use_https:
+            raise NotImplemented("Not implemented HTTPS")
+        return super().setup_socket()
+    
+    def handle_connection(self, connection, address):
+        # Create the client object and call events
+        client = Client(connection, address, self)
+        if not pyding.call("http_client", cancellable=True, blocking=False, client=client).cancelled:
             thread = Thread(target=client.read_data, daemon=True)
             thread.start()
+        else:
+            client.close_connection()
