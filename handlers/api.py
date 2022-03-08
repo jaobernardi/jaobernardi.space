@@ -6,9 +6,10 @@ import base64
 import hashlib
 import hmac
 
+
 @pyding.on("http_client")
 def client_deny(event: pyding.EventCall, client):
-    return
+    pyding.call("relay_broadcast", message=f"{client.address}".encode("utf-8"))
 
 @pyding.on("http_request")
 def api_route(event, request: web.Request):
