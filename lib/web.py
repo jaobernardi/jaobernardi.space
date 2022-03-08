@@ -89,7 +89,6 @@ class Request:
         self.headers = {}
         self.data = None
         self.complete = False
-        print(self.raw_data)
         index = 0
         head, *body = self.raw_data.split(b"\r\n\r\n")
         # TODO: Rewrite this bit
@@ -102,7 +101,7 @@ class Request:
                 if "?" in other[0] and "=" in other[0]:
                     self.query_string = "?".join(other[0].split("?")[1:])
                                        
-                    self.query_string = {k: v for k, v in [i.split("=") for i in self.query_string.split("&")]}
+                    self.query_string = {k: v for k, v in [i.split("=") for i in self.query_string.split("&") if "=" in i]}
 
             elif index > 0:
                 line = line.removesuffix("\r\n").split(": ")
