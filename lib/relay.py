@@ -37,6 +37,7 @@ class RelayServer(pyding.EventSupport, Server):
             self.private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=None,
+                backend=None,
             )
         self.public_key = self.private_key.public_key()
     def handle_connection(self, connection, address):
