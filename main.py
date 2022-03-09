@@ -8,8 +8,11 @@ def main():
     thread.start()
 
     server = web.HTTPServer(**config.get_web())
-    server.spin_up()
+    thread = threading.Thread(target=server.spin_up, daemon=True)
+    thread.start()
 
+    while True:
+        pass
 
 if __name__ == "__main__":
     utils.load_handlers()
