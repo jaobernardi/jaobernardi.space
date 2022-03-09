@@ -7,6 +7,10 @@ import hashlib
 import hmac
 
 
+@pyding.on("http_client")
+def client_deny(event: pyding.EventCall, client):
+    return
+
 @pyding.on("http_request")
 def api_route(event, request: web.Request):
     output = {}
