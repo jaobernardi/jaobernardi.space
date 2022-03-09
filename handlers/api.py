@@ -12,7 +12,6 @@ def add_connection(client, request):
 
 @pyding.on("http_request")
 def api_route(event, request: web.Request):
-    print("call")
     output = {}
     match request.path.split("/")[1:] if request.path else "":
         case ["webhooks", "twitter"]:
