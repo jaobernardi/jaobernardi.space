@@ -15,8 +15,8 @@ def client_handover(event: pyding.EventCall, client: web.Client, handover):
 
 
 @pyding.on("http_downstream")
-def client_handover(event: pyding.EventCall, client: web.Client, data: bytes):
-    logging.debug(f"Sending data to {client.address[0]}")
+def client_handover(event: pyding.EventCall, client: web.Client, handler):
+    logging.debug(f"Authority for {client.address[0]}'s connection changed.")
     return
 
 
