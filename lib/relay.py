@@ -38,11 +38,11 @@ class RelayServer(pyding.EventSupport, Server):
 
 
     def broadcast(self, message):
-        for client in self.connections:
+        for client in [i for i in self.connections]:
             try:
                 client.send_data(message)
             except:
-                pass
+                self.connections.remove(client)
 
     @pyding.on("relay_broadcast")
     def event_broadcast(self, event, message):
