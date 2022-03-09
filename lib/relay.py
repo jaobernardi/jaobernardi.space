@@ -1,6 +1,6 @@
 from time import sleep
 import pyding
-import threading
+import logging
 
 
 class RelayController(pyding.EventSupport):
@@ -26,12 +26,17 @@ class RelayController(pyding.EventSupport):
         if self.broadcasting:
             # Prevent broadcasting data while transmitting data
             while self.broadcasting:
+                logging.info(f"Waiting to broadcast {message}")
                 continue
-
+    
         self.broadcasting = True
         for client, req in self.connections:
-            client.send_data(message+b"\n")
+            try:
+                client.send_data(message+b"\n")
+            except Exception as e:
+                logging.info("Failed to send broadcast to "+client.address[0])
         self.broadcasting = False
+
 
     @pyding.on("relay_broadcast")
     def event_broadcast(self, event, message):
