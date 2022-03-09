@@ -4,3 +4,4 @@ __pycache__
 legacy_version
 config.json
 www/HPY.html
+*.pem
