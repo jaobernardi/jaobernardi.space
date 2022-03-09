@@ -170,8 +170,10 @@ class Server:
 
     def run(self):
         while self.running:
-           self.handle_connection(*self.socket.accept())
-            
+            try:
+                self.handle_connection(*self.socket.accept())
+            except:
+                pass
 
 class HTTPServer(Server):
     """
