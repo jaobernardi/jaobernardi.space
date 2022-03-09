@@ -20,7 +20,8 @@ class RelayController(pyding.EventSupport):
     
     @pyding.on("relay_add")
     def add_connection(self, event, client, request):
-        self.connections.append([client, request])
+        if [client, request] not in self.connections:
+            self.connections.append([client, request])
 
     def broadcast(self, message):
         if self.broadcasting:
