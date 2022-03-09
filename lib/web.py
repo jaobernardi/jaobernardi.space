@@ -172,6 +172,9 @@ class Server:
         while self.running:
             try:
                 self.handle_connection(*self.socket.accept())
+            except KeyboardInterrupt:
+                self.running = False
+                break
             except:
                 pass
 
