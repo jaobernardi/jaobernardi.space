@@ -1,5 +1,8 @@
 from lib import web, utils, relay, config
 import threading
+import logging
+
+logging.basicConfig()
 
 def main():
     # Setup server

@@ -16,8 +16,9 @@ class Client:
         self.connection = connection
         self.address = address
     
-    def send_data(self, data):        
+    def send_data(self, data):
         self.connection.send(data)
+        pyding.call("http_downstream", client=self, data=data)     
 
     def read_data(self):
         # Init the request
@@ -37,25 +38,22 @@ class Client:
     def close_connection(self):
         self.connection.close()
 
+
     def process_data(self, data):
         event = pyding.call("http_request", request=data)
         if event.response:
             for content in event.response.output():
+                # Transfer control over to a handler.
                 if isinstance(content, FunctionType):
-                    print(content)
                     content(client=self, request=data)
+                    pyding.call("http_handover", client=self, handler=content)
                     return
-
+                # Send data
                 self.send_data(content)
+        # Since we're done, close the connection.
         self.close_connection()
 
 
-class ConnectionHandover:
-    def __init__(self, handler):
-        self.handler = handler
-    
-    def __call__(self, *args, **kwds):
-        return handler(*args, **kwds)
 
 
 class Response:
@@ -81,8 +79,6 @@ class Response:
             if isinstance(self.data, GeneratorType):
                 for i in self.data:
                     yield i
-            elif isinstance(self.data, ConnectionHandover):
-                return self.data
             else:
                 yield self.data
 
