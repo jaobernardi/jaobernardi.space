@@ -2,7 +2,7 @@ from lib import web, utils, relay, config
 import threading
 import logging
 
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 
 def main():
     # Setup server
