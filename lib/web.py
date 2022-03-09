@@ -1,6 +1,5 @@
 from cgitb import handler
 from types import FunctionType, GeneratorType
-from flask import request
 import pyding
 import socket, ssl
 from threading import Thread
