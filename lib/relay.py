@@ -27,6 +27,7 @@ class RelayClient:
         return
 
 
+
 class RelayServer(pyding.EventSupport, Server):
     def __init__(self, host: str, port: int, private_key: str):
         self.host = host
@@ -38,9 +39,9 @@ class RelayServer(pyding.EventSupport, Server):
             self.private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=None,
-                backend=backend,
             )
         self.public_key = self.private_key.public_key()
+
     def handle_connection(self, connection, address):
         client = RelayClient(connection, address)
         self.connections.append(client)
@@ -49,7 +50,7 @@ class RelayServer(pyding.EventSupport, Server):
 
 
     def broadcast(self, message):
-        message = self.public_key.encrypt(
+        message = self.private_key.public_key().encrypt(
             message,
             padding.OAEP(
                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
