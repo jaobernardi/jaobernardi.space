@@ -1,10 +1,11 @@
 from email import message
 import json
-from lib import web, config
+from lib import web, config, relay
 import pyding
 import base64
 import hashlib
 import hmac
+import os
 
 
 @pyding.on("http_client")
@@ -20,7 +21,13 @@ def api_route(event, request: web.Request):
                 sha256_hash_digest = hmac.new(config.get_user_token().encode("utf-8"), msg=request.query_string['crc_token'].encode("utf-8"), digestmod=hashlib.sha256).digest()
                 output = {"response_token": 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")}
             out = {"status": 200, "http_message": "OK"}
-            pyding.call("relay_broadcast", message=request.data)
+            pyding.call("relay_broadcast", message=request.raw_data)
+        
+        case ["webhooks", "twitter", "stream"]:
+            def add_connection(client, request):
+                pyding.call("relay_add", client=client, request=request)
+            
+            return web.Response(200, "OK", {"Server": "jdspace"}, add_connection)
 
         case ["relay"]:
             out = {"status": 200, "http_message": "OK"}

@@ -1,4 +1,6 @@
-from types import GeneratorType
+from cgitb import handler
+from types import FunctionType, GeneratorType
+from flask import request
 import pyding
 import socket, ssl
 from threading import Thread
@@ -15,8 +17,8 @@ class Client:
         self.connection = connection
         self.address = address
     
-    def send_data(self, data):
-        return self.connection.send(data)
+    def send_data(self, data):        
+        self.connection.send(data)
 
     def read_data(self):
         # Init the request
@@ -32,7 +34,6 @@ class Client:
             request.append_raw_data(new_data)
         # Process the request
         self.process_data(request)
-        self.close_connection()
 
     def close_connection(self):
         self.connection.close()
@@ -41,8 +42,21 @@ class Client:
         event = pyding.call("http_request", request=data)
         if event.response:
             for content in event.response.output():
+                if isinstance(content, FunctionType):
+                    print(content)
+                    content(client=self, request=data)
+                    return
+
                 self.send_data(content)
         self.close_connection()
+
+
+class ConnectionHandover:
+    def __init__(self, handler):
+        self.handler = handler
+    
+    def __call__(self, *args, **kwds):
+        return handler(*args, **kwds)
 
 
 class Response:
@@ -68,6 +82,8 @@ class Response:
             if isinstance(self.data, GeneratorType):
                 for i in self.data:
                     yield i
+            elif isinstance(self.data, ConnectionHandover):
+                return self.data
             else:
                 yield self.data
 
@@ -179,7 +195,8 @@ class HTTPServer(Server):
 
     def start_socket(self):
         super().start_socket()
-        self.socket = self.context.wrap_socket(self.socket, server_side=True)
+        if self.use_https:
+            self.socket = self.context.wrap_socket(self.socket, server_side=True)
 
     def handle_connection(self, connection, address):
         # Create the client object and call events

@@ -3,14 +3,12 @@ import threading
 
 def main():
     # Setup server
-    relay_server = relay.RelayServer(**config.get_relay())
+    relay_server = relay.RelayServer()
     thread = threading.Thread(target=relay_server.spin_up, daemon=True)
     thread.start()
 
     server = web.HTTPServer(**config.get_web())
-    thread = threading.Thread(target=server.spin_up, daemon=True)
-    thread.start()
-
+    target=server.spin_up()
     while True:
         pass
 
