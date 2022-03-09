@@ -3,6 +3,7 @@ import pyding
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.backends.openssl import backend
 
 import threading
 
@@ -37,7 +38,7 @@ class RelayServer(pyding.EventSupport, Server):
             self.private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=None,
-                backend=None,
+                backend=backend,
             )
         self.public_key = self.private_key.public_key()
     def handle_connection(self, connection, address):
