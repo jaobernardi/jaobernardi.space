@@ -177,6 +177,8 @@ class Server:
                 break
             except:
                 pass
+        self.socket.close()
+        
 
 class HTTPServer(Server):
     """
