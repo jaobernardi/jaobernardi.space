@@ -11,7 +11,9 @@ def main():
     thread.start()
 
     server = web.HTTPServer(**config.get_web())
-    target=server.spin_up()
+    thread=threading.Thread(target=server.spin_up, daemon=True)
+    thread.start()
+
     while True:
         pass
 

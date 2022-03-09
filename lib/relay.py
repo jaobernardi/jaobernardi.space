@@ -7,33 +7,38 @@ class RelayController(pyding.EventSupport):
     def __init__(self):
         # Init pyding events
         self.register_events()
-        self.connections = []
+        self.connections = {}
         self.running = False
-        self.last_broadcast = 0
+        self.broadcasting = False
 
     def spin_up(self):
+        self.running = True
         while self.running:
-            if (time()-self.last_broadcast) > 10:
-                self.broadcast(b"{}")
+            self.broadcast(b"{}")
+            sleep(100)
         return
 
-    @pyding.on("relay_add")
+    @pyding.on("relay_add", register_ra=False)
     def add_connection(self, event, client, request):
-        if [client, request] not in self.connections:
-            self.connections.append([client, request])
+        self.connections[client.address[0]] = client
 
     def broadcast(self, message):
-        self.last_broadcast = time()
-
-        for client, req in self.connections:
+        # Prevent messing with onging broadcasts
+        if self.broadcasting:
+            while self.broadcasting:
+                continue
+        
+        self.broadcasting = True
+        for address in self.connections:
+            client = self.connections[address]
             try:
                 client.send_data(message+b"\n")
             except Exception as e:
-                self.connections.remove([client, req])
+                self.connections.remove(address)
                 logging.info("Failed to send broadcast to "+client.address[0])
+        self.broadcasting = False
 
 
-
-    @pyding.on("relay_broadcast")
+    @pyding.on("relay_broadcast", register_ra=False)
     def event_broadcast(self, event, message):
         self.broadcast(message)
