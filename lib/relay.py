@@ -9,7 +9,6 @@ class RelayController(pyding.EventSupport):
         self.register_events()
         self.connections = {}
         self.running = False
-        self.broadcasting = False
 
     def spin_up(self):
         self.running = True
@@ -24,11 +23,6 @@ class RelayController(pyding.EventSupport):
 
     def broadcast(self, message):
         # Prevent messing with onging broadcasts
-        if self.broadcasting:
-            while self.broadcasting:
-                continue
-        
-        self.broadcasting = True
         for address in self.connections:
             client = self.connections[address]
             try:
@@ -36,7 +30,6 @@ class RelayController(pyding.EventSupport):
             except Exception as e:
                 self.connections.remove(address)
                 logging.info("Failed to send broadcast to "+client.address[0])
-        self.broadcasting = False
 
 
     @pyding.on("relay_broadcast", register_ra=False)
