@@ -11,11 +11,8 @@ def main():
     thread.start()
 
     server = web.HTTPServer(**config.get_web())
-    thread=threading.Thread(target=server.spin_up, daemon=True)
-    thread.start()
+    server.spin_up()
 
-    while True:
-        pass
 
 if __name__ == "__main__":
     utils.load_handlers()
