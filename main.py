@@ -6,7 +6,7 @@ logging.basicConfig()
 
 def main():
     # Setup server
-    relay_server = relay.RelayServer()
+    relay_server = relay.RelayController()
     thread = threading.Thread(target=relay_server.spin_up, daemon=True)
     thread.start()
 
