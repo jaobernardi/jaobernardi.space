@@ -28,7 +28,7 @@ class RelayController(pyding.EventSupport):
             try:
                 client.send_data(message+b"\n")
             except Exception as e:
-                self.connections.remove(address)
+                self.connections.pop(address)
                 logging.info("Failed to send broadcast to "+client.address[0])
 
 
