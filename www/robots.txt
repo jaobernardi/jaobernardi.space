@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: *.html
+Disallow: /twitter/video/
+Disallow: /webhooks/
