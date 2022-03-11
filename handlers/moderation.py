@@ -22,6 +22,7 @@ def client_handover(event: pyding.EventCall, client: web.Client, handler):
 
 @pyding.on("http_request")
 def http_request(event, request: web.Request):
+    print(request.raw_data)
     logging.info(f"Request for [{request.method}] {request.path}") 
     return
 
