@@ -1,5 +1,6 @@
 from cgitb import handler
 from types import FunctionType, GeneratorType
+from urllib import response
 import pyding
 import socket, ssl
 from threading import Thread
@@ -42,6 +43,7 @@ class Client:
     def process_data(self, data):
         event = pyding.call("http_request", request=data)
         if event.response:
+            pyding.call("http_response", response=event.response, response=data)
             for content in event.response.output():
                 # Transfer control over to a handler.
                 if isinstance(content, FunctionType):
