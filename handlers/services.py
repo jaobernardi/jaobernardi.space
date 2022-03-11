@@ -40,7 +40,7 @@ def services_route(event, request: web.Request):
                     "message": "Internal Server Error",
                     "headers": {
                         "Content-Type": "text/html",
-                        "Content-Length": len(failed),
+                        "Content-Length": len(output),
                     }
                 }
         case _:
