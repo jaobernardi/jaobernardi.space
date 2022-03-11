@@ -2,3 +2,8 @@ User-Agent: *
 Allow: *.html
 Disallow: /twitter/video/
 Disallow: /webhooks/
+
+User-Agent: Twitterbot
+Allow: *.html
+Allow: /twitter/video/
+Disallow: /webhooks/

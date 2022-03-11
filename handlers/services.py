@@ -1,12 +1,29 @@
 import pyding
 import requests
 from lib import web, config, twitter
+import logging
+
 
 @pyding.on("http_request")
 def services_route(event, request: web.Request):
     
     if "Host" not in request.headers or request.headers["Host"] != "services.jaobernardi.space":
         return
+    if "User-Agent" in request.headers and "Twitterbot" in request.headers["User-Agent"]:
+        logging.info("Serving data for Twitterbot")
+        data = ("<!DOCTYPE html>"
+        '<html lang="en">'
+        '<head>'
+            '<meta name="twitter:card" content="summary" />'
+            '<meta name="twitter:site" content="@jaobernard" />'
+            '<meta name="twitter:title" content="JDSpace | Serviços" />'
+            '<meta name="twitter:image" content="https://jaobernardi.space/jdspace.png" />'
+        "</head>"
+        "<body>" 
+        "</body>"
+        "</html>").encode("utf-8")
+        return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "text/html", "Content-Length": len(data)}, output)
+    
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
         case method, ["twitter", "video", id], headers:
             def send_data(req):
