@@ -20,7 +20,7 @@ def client_handover(event: pyding.EventCall, client: web.Client, handler):
     return
 
 
-@pyding.on("http_request")
+@pyding.on("http_request", priority=float("inf"))
 def http_request(event, request: web.Request):
     logging.info(f"Request for [{request.method}] {request.path}") 
     return
