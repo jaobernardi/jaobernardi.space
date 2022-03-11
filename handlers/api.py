@@ -16,10 +16,11 @@ def api_route(event, request: web.Request):
     match request.path.split("/")[1:] if request.path else "":
         case ["webhooks", "twitter"]:
             # Verify Twitter Headers
+            print(request.raw_data)
             if "x-twitter-webhooks-signature" not in request.headers:
                 return web.Response(403, "Forbidden", {"Server": "jdspace"})
 
-            print(request.raw_data)
+            
 
 
             # Do the CRC challange for twitter
