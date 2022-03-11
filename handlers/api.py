@@ -7,7 +7,7 @@ import hashlib
 import hmac
 import os
 
-last_crc = None
+
 
 def add_connection(client, request):
     pyding.call("relay_add", client=client, request=request)
@@ -20,20 +20,24 @@ def api_route(event, request: web.Request):
             # Verify Twitter Headers
             print(request.raw_data)
         
-
+            sha256_hash_digest = hmac.new(
+                config.get_user_token().encode("utf-8"),
+                msg=request.data,
+                digestmod=hashlib.sha256)\
+                .digest()
+            print(base64.b64encode(sha256_hash_digest).decode("utf-8"))
 
             # Do the CRC challange for twitter
             if "crc_token" in request.query_string:
                 # Do the hash things
                 sha256_hash_digest = hmac.new(
                     config.get_user_token().encode("utf-8"),
-                    msg=request.query_string['crc_token'].encode("utf-8"),
                     digestmod=hashlib.sha256)\
                     .digest()
                 # Return final token
-                last_crc = 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")
+                crc = 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")
                 output = {
-                    "response_token": last_crc
+                    "response_token": crc
                 }
                 print(output)
             # Return 200 OK
