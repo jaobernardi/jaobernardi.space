@@ -22,7 +22,7 @@ def services_route(event, request: web.Request):
         "<body>" 
         "</body>"
         "</html>").encode("utf-8")
-        return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "text/html", "Content-Length": len(data)}, output)
+        return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "text/html", "Content-Length": len(data)}, data)
     
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
         case method, ["twitter", "video", id], headers:
