@@ -15,8 +15,8 @@ def services_route(event, request: web.Request):
             def send_data(req):
                 for data in req.iter_content(1024):
                     yield data
-            video_url = twitter.get_video(id)
             try:
+                video_url = twitter.get_video(id)
                 req = requests.get(video_url, stream=True)
 
                 http_status = {
