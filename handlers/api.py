@@ -1,4 +1,5 @@
 from email import message
+from email.mime import base
 import json
 from lib import web, config, relay
 import pyding
@@ -38,30 +39,37 @@ def api_route(event, request: web.Request):
                 .digest()
             
             signature = b'sha256=' + base64.b64encode(sha256_hash_digest)
-            print(signature, twitter_signature)
+
             if signature == twitter_signature:
-                http_status = {"status": 200, "message": "OK"}
+                http_status = {"status": 200, "message": "OK", "headers": {}}
                 # Relay data
                 if request.data:
                     pyding.call("relay_broadcast", message=request.data)
             else:
-                http_status = {"status": 403, "message": "Forbidden"}
+                http_status = {"status": 403, "message": "Forbidden", "headers": {}}
 
-        case method, ["webhooks", "twitter", "stream"], headers:
-            # Return a response with a handover handler function.
-            return web.Response(200, "OK", {"Server": "jdspace"}, add_connection)
+        case "GET", ["webhooks", "twitter", "stream"], headers:
+            http_status = {"status": 401, "message": "Unauthorized", "headers": {"WWW-Authenticate": "Basic realm=\"Twitter webhook data stream\""}}
+
+
+        case "GET", ["webhooks", "twitter", "stream"], {"Authorization": auth}:
+            cred = base64.b64encode(config.get_stream_auth().encode("utf-8")).decode("utf-8")
+            if auth == f"Basic {cred}":
+                # Return a response with a handover handler function.
+                return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "application/stream+json"}, add_connection)
+            http_status = {"status": 401, "message": "Unauthorized", "headers": {}}
 
         case "POST", ["relay"], headers:
-            http_status = {"status": 200, "message": "OK"}
+            http_status = {"status": 200, "message": "OK", "headers": {}}
             output = {"relayed": True}
              
         case "POST", ["acervo", *extra], headers:
-            http_status = {"status": 501, "message": "OK"}
+            http_status = {"status": 501, "message": "OK", "headers": {}}
 
         case _:
-            http_status = {"status": 403, "message": "Forbidden"}
+            http_status = {"status": 403, "message": "Forbidden", "headers": {}}
 
     
     
     output = json.dumps(output).encode()
-    return web.Response(http_status['status'], http_status['message'], {"Server": "jdspace", "Content-Type": "application/json", "Content-Length": len(output)}, output)
+    return web.Response(http_status['status'], http_status['message'], {"Server": "jdspace", "Content-Type": "application/json", "Content-Length": len(output)} | http_status['headers'], output)
