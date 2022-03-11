@@ -50,6 +50,10 @@ class Client:
                     content(client=self, request=data)
                     pyding.call("http_handover", client=self, handler=content)
                     return
+                elif isinstance(content, GeneratorType):
+                    for data in content:
+                        self.send_data(data)
+                    break
                 # Send data
                 self.send_data(content)
         # Since we're done, close the connection.
