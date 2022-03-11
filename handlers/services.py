@@ -9,6 +9,7 @@ def services_route(event, request: web.Request):
     
     if "Host" not in request.headers or request.headers["Host"] != "services.jaobernardi.space":
         return
+    print(request.header['User-Agent'])
     if "User-Agent" in request.headers and "Twitterbot" in request.headers["User-Agent"]:
         logging.info("Serving data for Twitterbot")
         data = ("<!DOCTYPE html>"
