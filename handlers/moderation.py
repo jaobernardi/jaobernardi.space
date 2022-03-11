@@ -20,12 +20,12 @@ def client_handover(event: pyding.EventCall, client: web.Client, handler):
     return
 
 
-@pyding.on("http_request", priority=float("inf"))
+@pyding.on("http_request")
 def http_request(event, request: web.Request):
     logging.info(f"Request for [{request.method}] {request.path}") 
     return
 
-@pyding.on("http_response", priority=float("inf"))
+@pyding.on("http_response")
 def http_response(event, request: web.Request, response: web.Response):
     logging.info(f"Served [{response.status_code}] [{response.status_message}] for [{request.method}] {request.path}") 
     return
