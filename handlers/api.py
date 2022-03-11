@@ -10,13 +10,15 @@ import os
 
 
 
-def add_connection(client, request):
+def handover_connection(client, request):
     pyding.call("relay_add", client=client, request=request)
+
 
 @pyding.on("http_request")
 def api_route(event, request: web.Request):
     output = {}
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
+
         case "GET", ["webhooks", "twitter"], headers:
             # Do the CRC challange for twitter
             if "crc_token" in request.query_string:
@@ -30,14 +32,15 @@ def api_route(event, request: web.Request):
                 output = {
                     "response_token": crc
                 }
+
+
         case "POST", ["webhooks", "twitter"], {"X-Twitter-Webhooks-Signature": twitter_signature, **headers}:
             # Check twitter headers
             sha256_hash_digest = hmac.new(
                 config.get_user_token().encode("utf-8"),
                 msg=request.data,
                 digestmod=hashlib.sha256)\
-                .digest()
-            
+                .digest()            
             signature = b'sha256=' + base64.b64encode(sha256_hash_digest)
 
             if signature == twitter_signature:
@@ -48,23 +51,22 @@ def api_route(event, request: web.Request):
             else:
                 http_status = {"status": 403, "message": "Forbidden", "headers": {}}
 
+
+        case "GET", ["webhooks", "twitter", "stream"], {"Authorization": auth, **headers}:
+            cred = base64.b64encode(config.get_stream_auth().encode("utf-8")).decode("utf-8")
+            if auth == f"Basic {cred}":
+                # Return a response with a handover handler function.
+                return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "application/stream+json"}, handover_connection)
+            http_status = {"status": 401, "message": "Unauthorized", "headers": {}}
+
+
         case "GET", ["webhooks", "twitter", "stream"], headers:
             http_status = {"status": 401, "message": "Unauthorized", "headers": {"WWW-Authenticate": "Basic realm=\"Twitter webhook data stream\""}}
 
 
-        case "GET", ["webhooks", "twitter", "stream"], {"Authorization": auth}:
-            cred = base64.b64encode(config.get_stream_auth().encode("utf-8")).decode("utf-8")
-            if auth == f"Basic {cred}":
-                # Return a response with a handover handler function.
-                return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "application/stream+json"}, add_connection)
-            http_status = {"status": 401, "message": "Unauthorized", "headers": {}}
-
-        case "POST", ["relay"], headers:
-            http_status = {"status": 200, "message": "OK", "headers": {}}
-            output = {"relayed": True}
-             
         case "POST", ["acervo", *extra], headers:
             http_status = {"status": 501, "message": "OK", "headers": {}}
+
 
         case _:
             http_status = {"status": 403, "message": "Forbidden", "headers": {}}
