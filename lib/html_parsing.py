@@ -42,9 +42,13 @@ class PythonTag:
 
 
 def eval_document(document, shared_global={}):
+    to_byte = False
+    if isinstance(document, bytes):
+        to_byte = True
+        document = document.decode("utf-8")
     logging.debug("Parsing HTML document")
     soup = BeautifulSoup(document, "html.parser")
     for tag in soup.find_all("python"):
         wrapped_tag = PythonTag(tag, soup, shared_global)
         wrapped_tag.execute()
-    return soup.prettify()
+    return soup.prettify() if not to_byte else soup.prettify().encode("utf-8")
