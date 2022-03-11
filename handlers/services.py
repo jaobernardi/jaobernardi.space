@@ -12,24 +12,24 @@ def services_route(event, request: web.Request):
 
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
         case method, ["twitter", "video", id, *extra], headers:
-            def send_data(req):
+            def send_data(url):
+                req = requests.get(video_url, stream=True)
                 for data in req.iter_content(1024):
                     yield data
             try:
                 video_url = twitter.get_video(id)
-                req = requests.get(video_url, stream=True)
+                
 
                 http_status = {
                     "status": 200,
                     "message": "Ok",
                     "headers": {
-                        "Content-Type": req.headers['Content-Type'],
-                        "Content-Length": req.headers['Content-Length'],
+                        "Content-Type": "video/mp4",
                         "Content-Disposition": f"attachment; filename=\"{id}.mp4\""
                     }
                 }
 
-                output = send_data(req)
+                output = send_data(video_url)
             except:
                 failed = open("www/services_fail.html", "rb")
                 output = failed.read()
