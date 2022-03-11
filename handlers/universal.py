@@ -4,6 +4,7 @@ from lib import web, config, html_parsing
 
 @pyding.on("http_request", priority=float("inf"))
 def universal_files(event, request: web.Request):
+    print("universal")
     if request.path == "/robots.txt":
         robots = open("www/robots.txt", "rb")
         robots = robots.read()
