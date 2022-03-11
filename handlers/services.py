@@ -26,7 +26,7 @@ def services_route(event, request: web.Request):
         return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "text/html", "Content-Length": len(data)}, data)
     
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
-        case method, ["twitter", "video", id], headers:
+        case method, ["twitter", "video", id, *extra], headers:
             def send_data(req):
                 for data in req.iter_content(1024):
                     yield data
