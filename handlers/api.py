@@ -7,7 +7,7 @@ import hashlib
 import hmac
 import os
 
-last
+last_crc = None
 
 def add_connection(client, request):
     pyding.call("relay_add", client=client, request=request)
@@ -31,8 +31,9 @@ def api_route(event, request: web.Request):
                     digestmod=hashlib.sha256)\
                     .digest()
                 # Return final token
+                last_crc = 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")
                 output = {
-                    "response_token": 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")
+                    "response_token": last_crc
                 }
                 print(output)
             # Return 200 OK
