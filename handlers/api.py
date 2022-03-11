@@ -7,6 +7,8 @@ import hashlib
 import hmac
 import os
 
+last
+
 def add_connection(client, request):
     pyding.call("relay_add", client=client, request=request)
 
@@ -17,10 +19,7 @@ def api_route(event, request: web.Request):
         case ["webhooks", "twitter"]:
             # Verify Twitter Headers
             print(request.raw_data)
-            if "x-twitter-webhooks-signature" not in request.headers:
-                return web.Response(403, "Forbidden", {"Server": "jdspace"})
-
-            
+        
 
 
             # Do the CRC challange for twitter
@@ -35,6 +34,7 @@ def api_route(event, request: web.Request):
                 output = {
                     "response_token": 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")
                 }
+                print(output)
             # Return 200 OK
             http_status = {"status": 200, "message": "OK"}
             # Relay data
