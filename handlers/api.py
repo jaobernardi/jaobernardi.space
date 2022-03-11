@@ -41,8 +41,8 @@ def api_route(event, request: web.Request):
                 msg=request.data,
                 digestmod=hashlib.sha256)\
                 .digest()            
-            signature = b'sha256=' + base64.b64encode(sha256_hash_digest)
-            print(signature, twitter_signature)
+            signature = 'sha256=' + base64.b64encode(sha256_hash_digest).decode("utf-8")
+
             if signature == twitter_signature:
                 http_status = {"status": 200, "message": "OK", "headers": {}}
                 # Relay data
