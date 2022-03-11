@@ -2,6 +2,7 @@ import pyding
 from lib import web
 import logging
 
+
 @pyding.on("http_client")
 def client_deny(event: pyding.EventCall, client: web.Client):
     logging.info(f"New connection from {client.address[0]}")
@@ -21,7 +22,7 @@ def client_handover(event: pyding.EventCall, client: web.Client, handler):
 
 
 @pyding.on("http_request", priority=float("inf"))
-def http_request(event, request: web.Request):
+def http_request(event, request: web.Request, client: web.Client):
     logging.info(f"Request for [{request.method}] {request.path}") 
     return
 

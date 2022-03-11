@@ -41,7 +41,7 @@ class Client:
 
 
     def process_data(self, data):
-        event = pyding.call("http_request", request=data, first_response=True)
+        event = pyding.call("http_request", request=data, client=self, first_response=True)
         if event.response:
             pyding.call("http_response", response=event.response, request=data)
             for content in event.response.output():

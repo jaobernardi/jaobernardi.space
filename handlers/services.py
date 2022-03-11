@@ -5,7 +5,7 @@ import logging
 
 
 @pyding.on("http_request")
-def services_route(event, request: web.Request):
+def services_route(event, request: web.Request, client: web.Client):
     
     if "Host" not in request.headers or request.headers["Host"] != "services.jaobernardi.space":
         return

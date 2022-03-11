@@ -4,8 +4,7 @@ import logging
 
 
 @pyding.on("http_request", priority=float("inf"))
-def universal_files(event, request: web.Request):
-
+def universal_files(event, request: web.Request, client: web.Client):
     if request.path == "/robots.txt":
         robots = open("www/robots.txt", "rb")
         robots = robots.read()
