@@ -16,19 +16,33 @@ def services_route(event, request: web.Request):
                 for data in req.iter_content(1024):
                     yield data
             video_url = twitter.get_video(id)
-            req = requests.get(video_url, stream=True)
+            try:
+                req = requests.get(video_url, stream=True)
 
-            http_status = {
-                "status": 200,
-                "message": "Ok",
-                "headers": {
-                    "Content-Type": req.headers['Content-Type'],
-                    "Content-Length": req.headers['Content-Length'],
-                    "Content-Disposition": f"attachment; filename=\"{id}.mp4\""
+                http_status = {
+                    "status": 200,
+                    "message": "Ok",
+                    "headers": {
+                        "Content-Type": req.headers['Content-Type'],
+                        "Content-Length": req.headers['Content-Length'],
+                        "Content-Disposition": f"attachment; filename=\"{id}.mp4\""
+                    }
                 }
-            }
 
-            output = send_data(req)
+                output = send_data(req)
+            except:
+                failed = open("www/services_fail.html", "rb")
+                output = failed.read()
+                failed.close()
+        
+                http_status = {
+                    "status": 500,
+                    "message": "Internal Server Error",
+                    "headers": {
+                        "Content-Type": "text/html",
+                        "Content-Length": len(failed),
+                    }
+                }
         case _:
             output = b""
             http_status = {"status": 403, "message": "Forbidden", "headers": {}}
