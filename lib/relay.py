@@ -13,8 +13,8 @@ class RelayController(pyding.EventSupport):
     def spin_up(self):
         self.running = True
         while self.running:
-            self.broadcast(b"{}")
-            sleep(100)
+            self.broadcast(b'{"is_keep_alive": true}')
+            sleep(30)
         return
 
     @pyding.on("relay_add", register_ra=False)
