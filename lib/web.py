@@ -41,9 +41,9 @@ class Client:
 
 
     def process_data(self, data):
-        event = pyding.call("http_request", request=data)
+        event = pyding.call("http_request", request=data, first_response=True)
         if event.response:
-            pyding.call("http_response", response=event.response, request=data, first_response=True)
+            pyding.call("http_response", response=event.response, request=data)
             for content in event.response.output():
                 # Transfer control over to a handler.
                 if isinstance(content, FunctionType):
