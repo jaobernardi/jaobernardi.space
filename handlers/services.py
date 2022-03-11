@@ -4,7 +4,7 @@ from lib import web, config, twitter
 
 @pyding.on("http_request")
 def services_route(event, request: web.Request):
-    print("services")
+    
     if "Host" not in request.headers or request.headers["Host"] != "services.jaobernardi.space":
         return
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
