@@ -30,7 +30,7 @@ def api_route(event, request: web.Request, client: web.Client):
                 # Do the hash things
                 sha256_hash_digest = hmac.new(
                     config.get_user_token().encode("utf-8"),
-                    msg=request.query_string['crc_token'],
+                    msg=request.query_string['crc_token'].encode("utf-8"),
                     digestmod=hashlib.sha256)\
                     .digest()
                 # Return final token
