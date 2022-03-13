@@ -79,4 +79,5 @@ def api_route(event, request: web.Request, client: web.Client):
     
     
     output = json.dumps(output).encode()
+    print(http_status['status'], http_status['message'], {"Server": "jdspace", "Content-Type": "application/json", "Content-Length": len(output)} | http_status['headers'], output)
     return web.Response(http_status['status'], http_status['message'], {"Server": "jdspace", "Content-Type": "application/json", "Content-Length": len(output)} | http_status['headers'], output)
