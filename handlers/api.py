@@ -22,8 +22,9 @@ def api_route(event, request: web.Request, client: web.Client):
 
     output = {}
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
-
+        
         case "GET", ["webhooks", "twitter"], headers:
+            http_status = {"status": 403, "message": "Forbidden", "headers": {}}
             # Do the CRC challange for twitter
             if "crc_token" in request.query_string:
                 # Do the hash things
@@ -36,7 +37,7 @@ def api_route(event, request: web.Request, client: web.Client):
                 output = {
                     "response_token": crc
                 }
-
+                http_status = {"status": 200, "message": "OK", "headers": {}}
 
         case "POST", ["webhooks", "twitter"], {"X-Twitter-Webhooks-Signature": twitter_signature, **headers}:
             # Check twitter headers
