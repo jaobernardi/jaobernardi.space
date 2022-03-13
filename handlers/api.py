@@ -30,6 +30,7 @@ def api_route(event, request: web.Request, client: web.Client):
                 # Do the hash things
                 sha256_hash_digest = hmac.new(
                     config.get_user_token().encode("utf-8"),
+                    msg=request.query_string['crc_token'],
                     digestmod=hashlib.sha256)\
                     .digest()
                 # Return final token
@@ -38,7 +39,6 @@ def api_route(event, request: web.Request, client: web.Client):
                     "response_token": crc
                 }
                 http_status = {"status": 200, "message": "OK", "headers": {}}
-            print(output)
         case "POST", ["webhooks", "twitter"], {"X-Twitter-Webhooks-Signature": twitter_signature, **headers}:
             # Check twitter headers
             sha256_hash_digest = hmac.new(
@@ -79,5 +79,4 @@ def api_route(event, request: web.Request, client: web.Client):
     
     
     output = json.dumps(output).encode()
-    print(http_status['status'], http_status['message'], {"Server": "jdspace", "Content-Type": "application/json", "Content-Length": len(output)} | http_status['headers'], output)
     return web.Response(http_status['status'], http_status['message'], {"Server": "jdspace", "Content-Type": "application/json", "Content-Length": len(output)} | http_status['headers'], output)
