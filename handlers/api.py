@@ -38,7 +38,7 @@ def api_route(event, request: web.Request, client: web.Client):
                     "response_token": crc
                 }
                 http_status = {"status": 200, "message": "OK", "headers": {}}
-
+            print(output)
         case "POST", ["webhooks", "twitter"], {"X-Twitter-Webhooks-Signature": twitter_signature, **headers}:
             # Check twitter headers
             sha256_hash_digest = hmac.new(
