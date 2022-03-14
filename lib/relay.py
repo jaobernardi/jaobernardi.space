@@ -23,7 +23,8 @@ class RelayController(pyding.EventSupport):
 
     def broadcast(self, message):
         # Prevent messing with onging broadcasts
-        for address in self.connections:
+
+        for client, address in self.connections.items():
             client = self.connections[address]
             try:
                 client.send_data(message+b"\r\n")
