@@ -24,13 +24,13 @@ class RelayController(pyding.EventSupport):
     def broadcast(self, message):
         # Prevent messing with onging broadcasts
 
-        for client, address in self.connections.items():
-            client = self.connections[address]
+        for address, client in self.connections.items():
             try:
                 client.send_data(message+b"\r\n")
+                logging.info(f"Broadcasting data to {address[0]}")
             except Exception as e:
                 self.connections.pop(address)
-                logging.info("Failed to send broadcast to "+client.address[0])
+                logging.info("Failed to send broadcast to "+address[0])
 
 
     @pyding.on("relay_broadcast", register_ra=False)
