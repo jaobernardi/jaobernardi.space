@@ -5,6 +5,14 @@ import logging
 
 @pyding.on("http_request", priority=float("inf"))
 def universal_files(event, request: web.Request, client: web.Client):
+    if "Host" not in request.headers:
+        return web.Response(
+            400,
+            "Bad Request",
+            {"Server": "jdspace"},
+            b""
+        )
+
     if request.path == "/robots.txt":
         robots = open("www/robots.txt", "rb")
         robots = robots.read()
@@ -18,7 +26,7 @@ def universal_files(event, request: web.Request, client: web.Client):
         )
 
     # Don't bother the APIS, they're too busy on their own.
-    if "Host" in request.headers and request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space"]:
+    if request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space"]:
         # Match a service name
         service_name = {"api.jaobernardi.space": "API", "services.jaobernardi.space": "Serviços Gerais"}[request.headers['Host']]
 
