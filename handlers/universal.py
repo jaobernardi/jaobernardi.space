@@ -12,7 +12,7 @@ def universal_files(event, request: web.Request, client: web.Client):
             {"Server": "jdspace"},
             b""
         )
-    match request.path.split("/")[0:]:
+    match request.path.split("/")[1:]:
         case ["robots.txt"]:
             robots = open("www/robots.txt", "rb")
             robots = robots.read()
