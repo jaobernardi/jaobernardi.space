@@ -12,19 +12,19 @@ def universal_files(event, request: web.Request, client: web.Client):
             {"Server": "jdspace"},
             b""
         )
-
-    if request.path == "/robots.txt":
-        robots = open("www/robots.txt", "rb")
-        robots = robots.read()
-        return web.Response(
-            200,
-            "OK",
-            {"Server": "jdspace",
-            "Content-Type": "text/plain",
-            "Content-Length": len(robots)},
-        robots
-        )
-
+    match request.path.split("/")[0:]:
+        case ["robots.txt"]:
+            robots = open("www/robots.txt", "rb")
+            robots = robots.read()
+            return web.Response(
+                200,
+                "OK",
+                {"Server": "jdspace",
+                "Content-Type": "text/plain",
+                "Content-Length": len(robots)},
+            robots
+            )
+    
     # Don't bother the APIS, they're too busy on their own.
     if request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space"]:
         # Match a service name

@@ -26,6 +26,7 @@ def http_request(event, request: web.Request, client: web.Client):
     logging.info(f"Request for [{request.method}] {request.path}") 
     return
 
+
 @pyding.on("http_response")
 def http_response(event, request: web.Request, response: web.Response):
     logging.info(f"Served [{response.status_code}] [{response.status_message}] for [{request.method}] {request.path}") 
