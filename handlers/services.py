@@ -12,11 +12,19 @@ def services_route(event, request: web.Request, client: web.Client):
 
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
         case method, ["twitter", "video", id, *extra], headers:
-            def send_data(url):
+            def send_data(url, chunksize=1024):
                 req = requests.get(video_url, stream=True)
-                for data in req.iter_content(1024):
+                for data in req.iter_content(chunksize):
                     yield data
+        
+
             try:
+                chunksize = 1024
+            
+                if "chunksize" in request.query_string:
+                    chunksize = int(request.query_string['chunksize'])
+                    if chunksize > 1024:
+                        chunksize = 1024
                 video_url = twitter.get_video(id)
                 
 
@@ -29,7 +37,7 @@ def services_route(event, request: web.Request, client: web.Client):
                     }
                 }
 
-                output = send_data(video_url)
+                output = send_data(video_url, chunksize)
             except:
                 failed = open("www/services_fail.html", "rb")
                 output = failed.read()
