@@ -21,7 +21,7 @@ def get_video(tweet_id):
     sources = {
         "video_url" : "https://twitter.com/i/videos/tweet/"+tweet_id,
         "activation_ep" :'https://api.twitter.com/1.1/guest/activate.json',
-        "api_ep" : "https://api.twitter.com/1.1/statuses/show.json?id="+tweet_id
+        "api_ep" : "https://api.twitter.com/1.1/statuses/show.json?id="+tweet_id+"&tweet_mode=extended"
     }
 
     # Requests
