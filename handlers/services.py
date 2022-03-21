@@ -3,6 +3,7 @@ import requests
 from lib import web, config, twitter
 import logging
 
+headers = {"X-Backend": "Services", "Server": "jdspace"}
 
 @pyding.on("http_request")
 def services_route(event, request: web.Request, client: web.Client):
@@ -55,4 +56,4 @@ def services_route(event, request: web.Request, client: web.Client):
             output = b""
             http_status = {"status": 403, "message": "Forbidden", "headers": {}}
 
-    return web.Response(http_status['status'], http_status['message'], {"Server": "jdspace"} | http_status['headers'], output)
+    return web.Response(http_status['status'], http_status['message'], headers | http_status['headers'], output)

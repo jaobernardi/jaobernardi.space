@@ -2,6 +2,8 @@ import pyding
 from lib import web
 import logging
 
+headers = {"X-Backend": "Moderation", "Server": "jdspace"}
+
 
 @pyding.on("http_client")
 def client_deny(event: pyding.EventCall, client: web.Client):

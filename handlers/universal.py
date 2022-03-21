@@ -1,7 +1,9 @@
+from wsgiref import headers
 import pyding
 from lib import web, config, html_parsing
 import logging
 
+headers = {"X-Backend": "Universal", "Server": "jdspace"}
 
 @pyding.on("http_request", priority=float("inf"))
 def universal_files(event, request: web.Request, client: web.Client):
@@ -9,7 +11,7 @@ def universal_files(event, request: web.Request, client: web.Client):
         return web.Response(
             400,
             "Bad Request",
-            {"Server": "jdspace"},
+            headers,
             b""
         )
     match request.path.split("/")[1:]:
@@ -19,9 +21,10 @@ def universal_files(event, request: web.Request, client: web.Client):
             return web.Response(
                 200,
                 "OK",
-                {"Server": "jdspace",
-                "Content-Type": "text/plain",
-                "Content-Length": len(robots)},
+                {
+                    "Content-Type": "text/plain",
+                    "Content-Length": len(robots),
+                } | headers,
             robots
             )
     
@@ -44,4 +47,4 @@ def universal_files(event, request: web.Request, client: web.Client):
             "<body>" 
             "</body>"
             "</html>").encode("utf-8")
-            return web.Response(200, "OK", {"Server": "jdspace", "Content-Type": "text/html", "Content-Length": len(data)}, data)
+            return web.Response(200, "OK", {"Content-Type": "text/html", "Content-Length": len(data)}|headers, data)
