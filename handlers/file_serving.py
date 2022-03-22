@@ -1,7 +1,8 @@
+import json
 import pathlib
 import pyding
 from lib import web, config, html_parsing
-from os import path
+import os
 import mimetypes
 
 headers = {"X-Backend": "Content", "Server": "jdspace"}
@@ -46,6 +47,16 @@ def html_route(event, request: web.Request, client: web.Client):
         not_found_file = html_parsing.eval_document(not_found_file, {"request": request})
         return web.Response(404, "Not Found", headers | {"Content-Type": "text/html", "Content-Length": len(not_found_file)}, not_found_file)
     
+    if ".settings" in os.listdir(os.path.dirname(path)):
+        settings_path = pathlib.Path(os.path.dirname(path)) / pathlib.Path(".settings")
+        path_settings = json.load(open(settings_path))
+        
+        if "hidden" in path_settings and os.path.basename(path) in path_settings["hidden"]:
+            forbidden_file = open("assets/generic_403.html", "rb").read()
+            forbidden_file = html_parsing.eval_document(forbidden_file, {"request": request})
+            return web.Response(403, "Forbidden", headers | {"Content-Type": "text/html", "Content-Length": len(forbidden_file)}, forbidden_file)
+
+
     found_file = open(str(path), "rb").read()
     found_file = html_parsing.eval_document(found_file, {"request": request})
     return web.Response(
