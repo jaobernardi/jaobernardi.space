@@ -14,8 +14,8 @@ def universal_files(event, request: web.Request, client: web.Client):
             headers,
             b""
         )
-    match request.path.split("/")[1:]:
-        case ["robots.txt"]:
+    match request.path.split("/")[-1]:
+        case "robots.txt":
             robots = open("www/robots.txt", "rb")
             robots = robots.read()
             return web.Response(
@@ -27,6 +27,20 @@ def universal_files(event, request: web.Request, client: web.Client):
                 } | headers,
             robots
             )
+        case "favicon.ico":
+            favicon = open("assets/favicon.png", "rb")
+            favicon = favicon.read()
+            return web.Response(
+                200,
+                "OK",
+                {
+                    "Content-Type": "image/png",
+                    "Content-Length": len(favicon),
+                } | headers,
+            favicon
+            )
+
+
     
     # Don't bother the APIS, they're too busy on their own.
     if request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space"]:
