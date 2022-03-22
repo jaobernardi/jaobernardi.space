@@ -43,9 +43,9 @@ def universal_files(event, request: web.Request, client: web.Client):
 
     
     # Don't bother the APIS, they're too busy on their own.
-    if request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space"]:
+    if request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space", "jaobernardi.space"]:
         # Match a service name
-        service_name = {"api.jaobernardi.space": "API", "services.jaobernardi.space": "Serviços Gerais"}[request.headers['Host']]
+        service_name = {"api.jaobernardi.space": "API", "services.jaobernardi.space": "Serviços Gerais", "jaobernardi.space": "Home"}[request.headers['Host']]
 
         if "User-Agent" in request.headers and "Twitterbot" in request.headers["User-Agent"]:
             # Serve data to twitter bot
