@@ -41,6 +41,10 @@ class Client:
 
 
     def process_data(self, data):
+        if not data:
+            self.close_connection()
+            return
+
         event = pyding.call("http_request", request=data, client=self, first_response=True)
         if event.response:
             pyding.call("http_response", response=event.response, request=data)
