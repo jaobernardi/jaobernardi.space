@@ -31,5 +31,9 @@ def http_request(event, request: web.Request, client: web.Client):
 
 @pyding.on("http_response")
 def http_response(event, request: web.Request, response: web.Response):
+    # TODO: Support for relative paths
+    if ".." in request.path:
+        return web.Response(403, "Forbidden", headers)
+
     logging.info(f"Served [{response.status_code}] [{response.status_message}] for [{request.method}] {request.path}") 
     return
