@@ -7,13 +7,6 @@ headers = {"X-Backend": "Universal", "Server": "jdspace"}
 
 @pyding.on("http_request", priority=float("inf"))
 def universal_files(event, request: web.Request, client: web.Client):
-    if "Host" not in request.headers:
-        return web.Response(
-            400,
-            "Bad Request",
-            headers,
-            b""
-        )
     match request.path.split("/")[-1]:
         case "robots.txt":
             robots = open("www/robots.txt", "rb")
@@ -40,7 +33,13 @@ def universal_files(event, request: web.Request, client: web.Client):
             favicon
             )
 
-
+    if "Host" not in request.headers:
+        return web.Response(
+            400,
+            "Bad Request",
+            headers,
+            b""
+        )
     
     # Don't bother the APIS, they're too busy on their own.
     if request.headers["Host"] in ["api.jaobernardi.space", "services.jaobernardi.space", "jaobernardi.space"]:
