@@ -40,7 +40,7 @@ def services_route(event, request: web.Request, client: web.Client):
 
                 output = send_data(video_url, chunksize)
             except:
-                failed = open("www/services_fail.html", "rb")
+                failed = open("assets/services_fail.html", "rb")
                 output = failed.read()
                 failed.close()
         
