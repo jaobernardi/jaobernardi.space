@@ -27,14 +27,14 @@ def universal_files(event, request: web.Request, client: web.Client):
                 } | headers,
             robots
             )
-        case "favicon":
-            favicon = open("assets/favicon.png", "rb")
+        case "favicon" | "favicon.ico":
+            favicon = open("assets/favicon.ico", "rb")
             favicon = favicon.read()
             return web.Response(
                 200,
                 "OK",
                 {
-                    "Content-Type": "image/png",
+                    "Content-Type": "image/x-icon",
                     "Content-Length": len(favicon),
                 } | headers,
             favicon
