@@ -27,7 +27,7 @@ def universal_files(event, request: web.Request, client: web.Client):
                 } | headers,
             robots
             )
-        case "favicon.ico":
+        case "favicon":
             favicon = open("assets/favicon.png", "rb")
             favicon = favicon.read()
             return web.Response(
