@@ -2,6 +2,6 @@
     "hidden": ["production.html"],
     "alias": {
         "alias.html": "index.html",
-        "alias": "index.html",
+        "alias": "index.html"
     }
 }
