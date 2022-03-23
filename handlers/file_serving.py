@@ -69,7 +69,9 @@ def html_route(event, request: web.Request, client: web.Client):
         if "require_auth" in path_settings and filename in path_settings["require_auth"]:
             cred = base64.b64encode(config.get_stream_auth().encode("utf-8")).decode("utf-8")
             if "Authorization" not in request.headers or f'Basic {cred}' == request.headers['Authorization']:
-                return web.Response(401, "Unauthorized", headers | {"WWW-Authenticate": f"Basic realm={path_settings['require_auth'][filename]}"}, b"opa")
+                forbidden_file = open("assets/generic_403.html", "rb").read()
+                forbidden_file = html_parsing.eval_document(forbidden_file, {"request": request})
+                return web.Response(401, "Unauthorized", headers | {"WWW-Authenticate": f"Basic realm=\"{path_settings['require_auth'][filename]}\"", "Content-Type": "text/html", "Content-Length": len(forbidden_file)}, forbidden_file)
 
     if not path.exists():
         not_found_file = open("assets/generic_404.html", "rb").read()
