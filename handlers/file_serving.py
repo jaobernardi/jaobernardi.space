@@ -53,7 +53,7 @@ def html_route(event, request: web.Request, client: web.Client):
         
         if "alias" in path_settings and filename in path_settings['alias']:
             path = os.path.dirname(path)+"/"+path_settings['alias'][filename]
-
+            path = pathlib.Path(path)
         
         if "hidden" in path_settings and filename in path_settings["hidden"]:
             forbidden_file = open("assets/generic_403.html", "rb").read()
