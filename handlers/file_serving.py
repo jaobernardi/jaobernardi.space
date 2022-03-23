@@ -47,6 +47,10 @@ def html_route(event, request: web.Request, client: web.Client):
         not_found_file = html_parsing.eval_document(not_found_file, {"request": request})
         return web.Response(404, "Not Found", headers | {"Content-Type": "text/html", "Content-Length": len(not_found_file)}, not_found_file)
     
+    if os.path.dirname(path) == ".settings":
+        return web.Response(403, "Forbidden", headers | {"Content-Type": "text/html", "Content-Length": len(forbidden_file)}, forbidden_file)
+
+
     if ".settings" in os.listdir(os.path.dirname(path)):
         settings_path = pathlib.Path(os.path.dirname(path)) / pathlib.Path(".settings")
         path_settings = json.load(open(settings_path))
