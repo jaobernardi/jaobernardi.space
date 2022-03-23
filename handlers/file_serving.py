@@ -42,11 +42,6 @@ def html_route(event, request: web.Request, client: web.Client):
     if path.is_dir():
         path = path / pathlib.Path("index.html")
     
-    if not path.exists():
-        not_found_file = open("assets/generic_404.html", "rb").read()
-        not_found_file = html_parsing.eval_document(not_found_file, {"request": request})
-        return web.Response(404, "Not Found", headers | {"Content-Type": "text/html", "Content-Length": len(not_found_file)}, not_found_file)
-    
     if os.path.basename(path) == ".settings":
         return web.Response(403, "Forbidden", headers | {"Content-Type": "text/html", "Content-Length": len(forbidden_file)}, forbidden_file)
 
@@ -65,6 +60,11 @@ def html_route(event, request: web.Request, client: web.Client):
             forbidden_file = html_parsing.eval_document(forbidden_file, {"request": request})
             return web.Response(403, "Forbidden", headers | {"Content-Type": "text/html", "Content-Length": len(forbidden_file)}, forbidden_file)
 
+    if not path.exists():
+        not_found_file = open("assets/generic_404.html", "rb").read()
+        not_found_file = html_parsing.eval_document(not_found_file, {"request": request})
+        return web.Response(404, "Not Found", headers | {"Content-Type": "text/html", "Content-Length": len(not_found_file)}, not_found_file)
+    
     try:
         found_file = open(str(path), "rb").read()
         found_file = html_parsing.eval_document(found_file, {"request": request})
