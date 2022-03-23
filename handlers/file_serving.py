@@ -3,9 +3,14 @@ import pathlib
 import pyding
 from lib import web, config, html_parsing
 import os
+import base64
 import mimetypes
 
 headers = {"X-Backend": "Content", "Server": "jdspace"}
+
+
+# TODO: FIX & CLEAN THIS AFTER!!!
+
 
 @pyding.on("http_request", priority=float("inf"))
 def html_route(event, request: web.Request, client: web.Client):
@@ -54,11 +59,17 @@ def html_route(event, request: web.Request, client: web.Client):
         if "alias" in path_settings and filename in path_settings['alias']:
             path = os.path.dirname(path)+"/"+path_settings['alias'][filename]
             path = pathlib.Path(path)
+            filename = path_settings['alias'][filename]
         
         if "hidden" in path_settings and filename in path_settings["hidden"]:
             forbidden_file = open("assets/generic_403.html", "rb").read()
             forbidden_file = html_parsing.eval_document(forbidden_file, {"request": request})
             return web.Response(403, "Forbidden", headers | {"Content-Type": "text/html", "Content-Length": len(forbidden_file)}, forbidden_file)
+
+        if "require_auth" in path_settings and filename in path_settings["require_auth"]:
+            cred = base64.b64encode(config.get_stream_auth().encode("utf-8")).decode("utf-8")
+            if "Authorization" not in request.headers or f'Basic {cred}' == request.headers['Authorization']:
+                return web.Response(401, "Unauthorized", headers | {"WWW-Authenticate": f"Basic realm={path_settings['require_auth'][filename]}"})
 
     if not path.exists():
         not_found_file = open("assets/generic_404.html", "rb").read()
