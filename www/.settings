@@ -1,7 +1,7 @@
 {
     "hidden": ["production.html"],
     "alias": {
-        "beta": "beta.html",
+        "beta": "beta.html"
     },
     "require_auth": {"beta.html": "Beta page"}
 }
