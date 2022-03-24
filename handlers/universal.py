@@ -11,10 +11,11 @@ service_name = {
 }
 
 
-@pyding.on("http_request", priority=float("inf"))
+@pyding.on("http_request", priority=99)
 def universal_files(event, request: web.Request, client: web.Client):
     # Serving universal files
-    match request.path.split("/")[-1]:
+    filename = request.path.split("/")[-1]
+    match filename:
         case "robots.txt":
             robots = open("www/robots.txt", "rb")
             robots = robots.read()
@@ -41,31 +42,16 @@ def universal_files(event, request: web.Request, client: web.Client):
                 favicon
             )
         
-        case "jdspace.png":
-            jdspace = open("assets/jdspace.png", "rb")
-            jdspace = jdspace.read()
+        case "jdspace.png" | "archive.png":
             return web.Response(
-                200,
-                "OK",
+                301,
+                "Moved Permanently",
                 {
-                    "Content-Type": "image/png",
-                    "Content-Length": len(jdspace),
+                    "Location": f"https://content.jaobernardi.space/{filename}",
                 } | headers,
-                jdspace
+                b" "
             )
-        
-        case "archive.png":
-            archive = open("assets/archive.png", "rb")
-            archive = archive.read()
-            return web.Response(
-                200,
-                "OK",
-                {
-                    "Content-Type": "image/png",
-                    "Content-Length": len(archive),
-                } | headers,
-                archive
-            )
+
     # Prevent invalid requests
     if "Host" not in request.headers:
         return web.Response(
