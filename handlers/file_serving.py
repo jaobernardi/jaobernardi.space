@@ -16,7 +16,7 @@ def load_error(code, **kwargs):
     if f"generic_{code}.html" in os.listdir("assets"):
         error_file = open(f"assets/generic_{code}.html", "rb").read()
     else:
-        error_file = open(f"assets/generic_error.html", "rb").read()
+        error_file = open(f"assets/generic_message.html", "rb").read()
 
     html_error = html_parsing.eval_document(error_file, kwargs | {"code": code})
     return html_error, len(html_error)
@@ -66,7 +66,10 @@ def html_route(event, request: web.Request, client: web.Client):
             if "Authorization" not in request.headers or f'Basic {cred}' == request.headers['Authorization']:
                 error_html, error_size = load_error(401, request=request)
                 return web.Response(401, "Unauthorized", headers | {"WWW-Authenticate": f"Basic realm=\"{path_settings['require_auth'][filename]}\"", "Content-Type": "text/html", "Content-Length": error_size}, error_html)
-
+        if "redirect" in path_settings and filename in path_settings["redirect"]:
+            redirect_html, html_size = load_error("Redirecionamento", request=request)
+            return web.Response(301, "Moved Permanently", headers | {"Location": path_settings['redirect'][filename], "Content-Type": "text/html", "Content-Length": html_size}, redirect_html)
+    
     if not path.exists():
         error_html, error_size = load_error(404, request=request)
         return web.Response(404, "Not Found", headers | {"Content-Type": "text/html", "Content-Length": error_size}, error_html)

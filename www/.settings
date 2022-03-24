@@ -3,5 +3,10 @@
     "alias": {
         "beta": "beta.html"
     },
-    "require_auth": {"beta.html": "Beta page"}
+    "require_auth": {
+        "beta.html": "Beta page"
+    },
+    "redirect": {
+        "titulo": "https://cad-app-titulonet.tse.jus.br/titulonet/novoRequerimento"
+    }
 }
