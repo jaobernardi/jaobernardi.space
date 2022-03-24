@@ -40,7 +40,32 @@ def universal_files(event, request: web.Request, client: web.Client):
                 } | headers,
                 favicon
             )
-
+        
+        case "jdspace.png":
+            jdspace = open("assets/jdspace.png", "rb")
+            jdspace = jdspace.read()
+            return web.Response(
+                200,
+                "OK",
+                {
+                    "Content-Type": "image/png",
+                    "Content-Length": len(jdspace),
+                } | headers,
+                jdspace
+            )
+        
+        case "archive.png":
+            archive = open("assets/archive.png", "rb")
+            archive = archive.read()
+            return web.Response(
+                200,
+                "OK",
+                {
+                    "Content-Type": "image/png",
+                    "Content-Length": len(archive),
+                } | headers,
+                archive
+            )
     # Prevent invalid requests
     if "Host" not in request.headers:
         return web.Response(
