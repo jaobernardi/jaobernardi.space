@@ -21,15 +21,6 @@ def services_route(event, request: web.Request, client: web.Client):
         return
 
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
-        case "GET", ["twitter", "video", id]:
-            http_status = {
-                "status": 301,
-                "message": "Permanent Redirect",
-                "headers": {
-                    "Location": f"/twitter/video/id/{id}"
-                }
-            }
-
         case "GET", ["twitter", "video", "url", url], head:
             url = unquote(url)
             parsed_url = urlparse(url)
@@ -85,6 +76,16 @@ def services_route(event, request: web.Request, client: web.Client):
                         "Content-Length": len(output),
                     }
                 }
+
+        case "GET", ["twitter", "video", id]:
+            http_status = {
+                "status": 301,
+                "message": "Permanent Redirect",
+                "headers": {
+                    "Location": f"/twitter/video/id/{id}"
+                }
+            }
+
         case _:
             output = b" "
             http_status = {"status": 403, "message": "Forbidden", "headers": {}}
