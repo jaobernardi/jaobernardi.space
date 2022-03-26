@@ -28,7 +28,7 @@ def cdn_serving(event, request: web.Request, client: web.Client):
                 {
                     "Content-Type": "image/png",
                     "Content-Length": len(asset),
-                    "X-Backend": "Universal"
+                    "X-Backend": "CDN"
                 },
                 asset
             )
@@ -37,6 +37,6 @@ def cdn_serving(event, request: web.Request, client: web.Client):
                 404,
                 "Not Found",
                 {
-                    "X-Backend": "Universal"
+                    "X-Backend": "CDN"
                 }
             )
