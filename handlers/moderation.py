@@ -1,12 +1,21 @@
 import pyding
-from lib import web
+from lib import web, utils
 import logging
+
+
+clients = utils.TimeoutDict(30)
 
 
 @pyding.on("http_client")
 def client_deny(event: pyding.EventCall, client: web.Client):
-    logging.info(f"New connection from {client.address[0]}")
-    event.cancel()
+    ip = client.address[0]
+    if ip not in clients:
+        clients[ip] = 0
+    clients[ip] += 1
+    logging.info(f"New connection from {ip}")
+    if clients[ip] > 2:
+        event.cancel()
+        logging.info(f"Dropped connection from {ip}")
     return
 
 
