@@ -19,7 +19,7 @@ def cdn_serving(event, request: web.Request, client: web.Client):
     # Serving universal files
     filename = request.path.split("/")[-1]
     match filename:
-        case "jdspace.png", "archive.png":
+        case "jdspace.png" | "archive.png":
             asset = open(f"assets/{filename}", "rb")
             asset = asset.read()
             return web.Response(
