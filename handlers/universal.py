@@ -3,7 +3,7 @@ import pyding
 from lib import web, config, html_parsing
 import logging
 
-headers = {"X-Backend": "Universal", "Server": "jdspace"}
+headers = {"X-Backend": "Universal"}
 service_name = {
     "api.jaobernardi.space": "API",
     "services.jaobernardi.space": "Serviços Gerais",

@@ -2,8 +2,6 @@ import pyding
 from lib import web
 import logging
 
-headers = {"X-Backend": "Moderation", "Server": "jdspace"}
-
 
 @pyding.on("http_client")
 def client_deny(event: pyding.EventCall, client: web.Client):
@@ -33,7 +31,7 @@ def http_request(event, request: web.Request, client: web.Client):
 def http_response(event, request: web.Request, response: web.Response):
     # TODO: Support for relative paths
     if ".." in request.path:
-        return web.Response(403, "Forbidden", headers)
+        return web.Response(403, "Forbidden", {"X-Backend": "Moderation"})
 
     logging.info(f"Served [{response.status_code}] [{response.status_message}] for [{request.method}] {request.path}") 
     return

@@ -3,7 +3,7 @@ import pyding
 from lib import web, config, html_parsing
 import logging
 
-headers = {"X-Backend": "Universal", "Server": "jdspace"}
+
 service_name = {
     "api.jaobernardi.space": "API",
     "services.jaobernardi.space": "Serviços Gerais",
@@ -28,6 +28,15 @@ def cdn_serving(event, request: web.Request, client: web.Client):
                 {
                     "Content-Type": "image/png",
                     "Content-Length": len(asset),
-                } | headers,
+                    "X-Backend": "Universal"
+                },
                 asset
+            )
+        case _:
+            return web.Response(
+                404,
+                "Not Found",
+                {
+                    "X-Backend": "Universal"
+                }
             )

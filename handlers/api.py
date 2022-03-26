@@ -9,9 +9,6 @@ import hmac
 import os
 
 
-headers = {"X-Backend": "API", "Server": "jdspace"}
-
-
 def handover_connection(client, request):
     pyding.call("relay_add", client=client, request=request)
 
@@ -81,4 +78,4 @@ def api_route(event, request: web.Request, client: web.Client):
     
     
     output = json.dumps(output).encode()
-    return web.Response(http_status['status'], http_status['message'], {"Content-Type": "application/json", "Content-Length": len(output)} | http_status['headers'] | headers, output)
+    return web.Response(http_status['status'], http_status['message'], {"Content-Type": "application/json", "Content-Length": len(output), "X-Backend": "API"} | http_status['headers'], output)
