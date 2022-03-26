@@ -13,3 +13,6 @@ def get_user_token():
 
 def get_web():
     return get_data()['web']
+
+def get_rate():
+    return get_data()['connection_rate']

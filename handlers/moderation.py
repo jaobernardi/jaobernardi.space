@@ -1,5 +1,5 @@
 import pyding
-from lib import web, utils
+from lib import web, utils, config
 import logging
 
 
@@ -11,11 +11,12 @@ def client_deny(event: pyding.EventCall, client: web.Client):
     ip = client.address[0]
     if ip not in clients:
         clients[ip] = 0
-    clients[ip] += 1
+    clients[ip] += clients[ip]
+
     logging.info(f"New connection from {ip}")
-    if clients[ip] > 2:
+    if clients[ip] > config.get_rate():
         event.cancel()
-        logging.info(f"Dropped connection from {ip}")
+        logging.info(f"Dropped connection from {ip} ({clients[ip]})")
     return
 
 
