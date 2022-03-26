@@ -25,7 +25,7 @@ def services_route(event, request: web.Request, client: web.Client):
                     chunksize = int(request.query_string['chunksize'])
                     if chunksize > 1024:
                         chunksize = 1024
-                video_url = twitter.get_video(id)
+                video_url = twitter.get_video(id) if "is_url" not in request.headers else id
                 
 
                 http_status = {
