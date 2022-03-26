@@ -77,7 +77,7 @@ def services_route(event, request: web.Request, client: web.Client):
                     }
                 }
 
-        case "GET", ["twitter", "video", id]:
+        case "GET", ["twitter", "video", id], head:
             http_status = {
                 "status": 301,
                 "message": "Permanent Redirect",
