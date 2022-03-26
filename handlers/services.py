@@ -85,7 +85,7 @@ def services_route(event, request: web.Request, client: web.Client):
                     "Location": f"/twitter/video/id/{id}"
                 }
             }
-
+            output = b" "
         case _:
             output = b" "
             http_status = {"status": 403, "message": "Forbidden", "headers": {}}
