@@ -79,7 +79,7 @@ def universal_files(event, request: web.Request, client: web.Client):
                         '<meta name="twitter:card" content="summary" />'
                         '<meta name="twitter:site" content="@jaobernard" />'
                         f'<meta name="twitter:title" content="{service} | JDSpace" />'
-                        '<meta name="twitter:image" content="https://jaobernardi.space/jdspace.png" />'
+                        '<meta name="twitter:image" content="https://content.jaobernardi.space/jdspace.png" />'
                     "</head>"
                     "<body>" 
                     "</body>"
