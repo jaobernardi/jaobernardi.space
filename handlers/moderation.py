@@ -6,6 +6,7 @@ import logging
 @pyding.on("http_client")
 def client_deny(event: pyding.EventCall, client: web.Client):
     logging.info(f"New connection from {client.address[0]}")
+    event.cancel()
     return
 
 
