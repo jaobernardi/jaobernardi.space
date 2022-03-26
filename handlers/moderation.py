@@ -11,7 +11,7 @@ def client_deny(event: pyding.EventCall, client: web.Client):
     ip = client.address[0]
     if ip not in clients:
         clients[ip] = 0
-    clients[ip] += clients[ip]
+    clients[ip] += 1
 
     logging.info(f"New connection from {ip}")
     if clients[ip] > config.get_rate():
