@@ -23,15 +23,14 @@ def client_handover(event: pyding.EventCall, client: web.Client, handler):
 
 @pyding.on("http_request", priority=float("inf"))
 def http_request(event, request: web.Request, client: web.Client):
+    if not request or not request.method or not request.path or ".." in request.path:
+        return web.Response(400, "Bad Request", {"X-Backend": "Moderation"})
+
     logging.info(f"Request for [{request.method}] {request.path}") 
     return
 
 
-@pyding.on("http_response", priority=float("inf"))
+@pyding.on("http_response")
 def http_response(event, request: web.Request, response: web.Response):
-    # TODO: Support for relative paths
-    if ".." in request.path:
-        return web.Response(403, "Forbidden", {"X-Backend": "Moderation"})
-
     logging.info(f"Served [{response.status_code}] [{response.status_message}] for [{request.method}] {request.path}") 
     return
