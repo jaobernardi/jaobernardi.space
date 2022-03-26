@@ -15,8 +15,9 @@ service_name = {
 def universal_files(event, request: web.Request, client: web.Client):
     # Serving universal files
     filename = request.path.split("/")[-1]
-    match filename:
-        case "robots.txt":
+    host = request.headers['Host'] if 'Host' in request.headers else None
+    match filename, host:
+        case "robots.txt", host:
             robots = open("www/robots.txt", "rb")
             robots = robots.read()
             return web.Response(
@@ -29,7 +30,7 @@ def universal_files(event, request: web.Request, client: web.Client):
                 robots
             )
 
-        case "favicon" | "favicon.ico":
+        case "favicon" | "favicon.ico", host:
             favicon = open("assets/favicon.ico", "rb")
             favicon = favicon.read()
             return web.Response(
@@ -42,7 +43,8 @@ def universal_files(event, request: web.Request, client: web.Client):
                 favicon
             )
         
-        case "jdspace.png" | "archive.png":
+        case "jdspace.png" | "archive.png", host if host != "content.jaobernardi.space":
+
             return web.Response(
                 301,
                 "Moved Permanently",
