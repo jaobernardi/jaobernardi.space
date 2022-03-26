@@ -53,7 +53,7 @@ def services_route(event, request: web.Request, client: web.Client):
                     }
                 }
         case _:
-            output = b""
+            output = b" "
             http_status = {"status": 403, "message": "Forbidden", "headers": {}}
 
     return web.Response(http_status['status'], http_status['message'], headers | http_status['headers'], output)
