@@ -12,7 +12,7 @@ def services_route(event, request: web.Request, client: web.Client):
         return
 
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
-        case method, ["twitter", "video", id, *extra], headers:
+        case method, ["twitter", "video", id, *extra], head:
             def send_data(url, chunksize=1024):
                 req = requests.get(video_url, stream=True)
                 for data in req.iter_content(chunksize):
