@@ -22,7 +22,7 @@ def load_error(code, **kwargs):
 
 
 @pyding.on("http_request")
-def html_route(event, request: web.Request, client: web.Client):
+def html_route(event, request: web.Request, client: web.Client, **args):
     if "Host" not in request.headers or request.headers["Host"] != "jaobernardi.space":
         return
 
