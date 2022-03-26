@@ -11,7 +11,7 @@ service_name = {
 }
 
 
-@pyding.on("http_request", priority=float("inf"))
+@pyding.on("http_request", priority=98)
 def cdn_serving(event, request: web.Request, client: web.Client):
     if "Host" not in request.headers or request.headers["Host"] != "content.jaobernardi.space":
         return

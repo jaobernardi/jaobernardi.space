@@ -27,7 +27,7 @@ def http_request(event, request: web.Request, client: web.Client):
     return
 
 
-@pyding.on("http_response")
+@pyding.on("http_response", priority=float("inf"))
 def http_response(event, request: web.Request, response: web.Response):
     # TODO: Support for relative paths
     if ".." in request.path:
