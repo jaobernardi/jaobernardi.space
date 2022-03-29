@@ -28,7 +28,7 @@ def html_route(event, request: web.Request, client: web.Client, **args):
 
     # Serve files
     
-    path = pathlib.Path("www") / pathlib.Path(request.path.removeprefix("/"))
+    path = pathlib.Path(config.get_root()) / pathlib.Path(request.path.removeprefix("/"))
     
     # Check if file is a path
     if path.is_dir():
