@@ -5,6 +5,12 @@ def get_data():
         data = json.load(file)
     return data
 
+def get_https_redirect():
+    return get_data()['https_redirect']
+
+def get_https_redirect_settings():
+    return get_data()['https_redirect_settings']
+
 def get_stream_auth():
     return get_data()['stream_auth']
 

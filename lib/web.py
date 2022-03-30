@@ -218,3 +218,13 @@ class HTTPServer(Server):
             thread.start()
         else:
             client.close_connection()
+
+class HTTPRedirecterServer(HTTPServer):
+    def __init__(self, host: str, port: int, location: str, private_key: str = "", chain: str = "", use_https: bool = False):
+        super().__init__(host, port, private_key, chain, use_https)
+        self.location = location
+    
+    def handle_connection(self, connection, address):
+        response = Response(301, "Permanent Redirect", {"X-Backend": "HTTPS-Redirects", "Location": self.location}, b" ")
+        for content in response.output():
+            self.send_data(content)

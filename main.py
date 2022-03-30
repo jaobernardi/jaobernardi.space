@@ -10,6 +10,10 @@ def main():
     thread = threading.Thread(target=relay_server.spin_up, daemon=True)
     thread.start()
 
+    if config.get_https_redirect():
+        http_redirect = web.HTTPRedirecterServer(**config.get_https_redirect_settings())
+        thread = threading.Thread(target=http_redirect.spin_up, daemon=True)
+        thread.start()
     server = web.HTTPServer(**config.get_web())
     server.spin_up()
 
