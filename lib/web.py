@@ -72,7 +72,7 @@ class Response:
     --------
     A simple http response parsing.
     """
-    def __init__(self, status_code, status_message, headers={}, data=b""):
+    def __init__(self, status_code, status_message, headers={}, data=b" "):
         self.status_code = status_code
         self.status_message = status_message
         self.headers = headers | {"Server": "jdspace", "Connection": "close"}
