@@ -8,6 +8,9 @@ def get_data():
 def get_https_redirect():
     return get_data()['https_redirect']
 
+def get_spotify_client_id():
+    return get_data()['spotify_client_id']
+
 def get_https_redirect_settings():
     return get_data()['https_redirect_settings']
 
