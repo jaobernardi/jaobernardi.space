@@ -227,4 +227,4 @@ class HTTPRedirecterServer(HTTPServer):
     def handle_connection(self, connection, address):
         response = Response(301, "Permanent Redirect", {"X-Backend": "HTTPS-Redirects", "Location": self.location}, b" ")
         for content in response.output():
-            self.send_data(content)
+            connection.send_data(content)
