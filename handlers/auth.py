@@ -16,7 +16,8 @@ def auth_handler(event, request: web.Request, client: web.Client):
                 "Moved Permanently",
                 {
                     "X-Backend": "Auth",
-                    "Location": quote(f"https://accounts.spotify.com/authorize?response_type=code&client_id={config.get_spotify_client_id()}&scope=user-modify-playback-state user-read-currently-playing user-read-playback-state streaming&redirect_uri=https://auth.jaobernardi.space/spotify/callback", safe="")
+                    "Location": f"https://accounts.spotify.com/authorize?response_type=code&client_id={config.get_spotify_client_id()}&scope=user-modify-playback-state user-read-currently-playing user-read-playback-state streaming&redirect_uri=https://auth.jaobernardi.space/spotify/callback"
+                    
                 }
             )
         case ["spotify", "callback"]:
