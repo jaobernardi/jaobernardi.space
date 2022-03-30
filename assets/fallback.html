@@ -62,11 +62,20 @@
         <div class="container center">
             <div class="center box">
                 <p>📛</p>
-                <p>Falha ao processar seu <i>request</i> ou a sua <i>header</i>.</p>
+                <p>Possíveis causas:</p>
+                <ol>
+                    <li>
+                        <p>Falha ao processar seu <i>request</i> ou a sua <i>header</i>.</p>
+                    </li>
+                    <li>
+                        <p>Talvez este <i>endpoint</i> não esteja implementado.</p>
+                    </li>
+                </ol>
             </div>
         </div>
         <div class="box">
             <p class="center">🔎</p>
+            <p class="center">Informações do request</p>
             <python>
                 data = request.raw_data.decode("utf-8")
                 this.echo("pre", data, {})
