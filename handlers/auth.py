@@ -9,7 +9,7 @@ def auth_handler(event, request: web.Request, client: web.Client):
     if "Host" not in request.headers or request.headers["Host"] != "auth.jaobernardi.space":
         return
 
-    match request.path.split(" "):
+    match request.path.split("/")[1:]:
         case ["spotify", "authenticate"]:            
             return web.Response(
                 "301",
