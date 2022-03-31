@@ -37,7 +37,7 @@ def services_route(event, request: web.Request, client: web.Client):
 
                 output = relay_data(url)
             else:
-                failed = open("assets/generic_403.html", "rb")
+                failed = open("assets/pages/generic_403.html", "rb")
                 output = failed.read()
                 failed.close()
                 http_status = {
@@ -64,7 +64,7 @@ def services_route(event, request: web.Request, client: web.Client):
 
                 output = relay_data(video_url)
             except:
-                failed = open("assets/services_fail.html", "rb")
+                failed = open("assets/pages/services_fail.html", "rb")
                 output = failed.read()
                 failed.close()
         

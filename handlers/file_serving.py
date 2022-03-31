@@ -12,10 +12,10 @@ import mimetypes
 
 
 def load_error(code, **kwargs):
-    if f"generic_{code}.html" in os.listdir("assets"):
-        error_file = open(f"assets/generic_{code}.html", "rb").read()
+    if f"generic_{code}.html" in os.listdir("assets/pages/"):
+        error_file = open(f"assets/pages/generic_{code}.html", "rb").read()
     else:
-        error_file = open(f"assets/generic_message.html", "rb").read()
+        error_file = open(f"assets/pages/generic_message.html", "rb").read()
 
     html_error = html_parsing.eval_document(error_file, kwargs | {"code": code})
     return html_error, len(html_error)

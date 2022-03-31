@@ -31,7 +31,7 @@ def universal_files(event, request: web.Request, client: web.Client):
             )
 
         case "favicon" | "favicon.ico", host:
-            favicon = open("assets/favicon.ico", "rb")
+            favicon = open("assets/images/favicon.ico", "rb")
             favicon = favicon.read()
             return web.Response(
                 200,
