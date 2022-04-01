@@ -14,7 +14,7 @@ class RelayController(pyding.EventSupport):
         self.running = True
         while self.running:
             self.broadcast(b'{"is_keep_alive": true}')
-            sleep(30)
+            sleep(60)
         return
 
     @pyding.on("relay_add", register_ra=False)
@@ -27,10 +27,8 @@ class RelayController(pyding.EventSupport):
         for address, client in self.connections.items():
             try:
                 client.send_data(message+b"\r\n")
-                logging.info(f"Broadcasting data to {address}")
             except Exception as e:
                 self.connections.pop(address)
-                logging.info("Failed to send broadcast to "+address)
 
 
     @pyding.on("relay_broadcast", register_ra=False)
