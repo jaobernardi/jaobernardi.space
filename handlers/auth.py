@@ -14,14 +14,14 @@ def auth_handler(event, request: web.Request, client: web.Client, host: str):
             )
 
         case "GET", ["spotify", "callback"], {"code": code, "state": state, **_params}:
-            asset = open(f"assets/spotify/access_success.html", "rb")
+            asset = open(f"assets/spotify/auth_success.html", "rb")
             asset = asset.read()
             content_type = "text/html"
 
             return web.Response.ok(asset, content_type, {"X-Backend": "Auth"})
 
         case "GET", ["spotify", "callback"], _params:
-            asset = open(f"assets/spotify/access_fail.html", "rb")
+            asset = open(f"assets/spotify/auth_fail.html", "rb")
             asset = asset.read()
             content_type = "text/html"
 
