@@ -19,29 +19,12 @@ def cdn_serving(event, request: web.Request, client: web.Client, host: str):
         case "jdspace.png" | "archive.png":
             asset = open(f"assets/images/{filename}", "rb")
             asset = asset.read()
-            return web.Response(
-                200,
-                "OK",
-                {
-                    "Content-Type": "image/png",
-                    "Content-Length": len(asset),
-                    "X-Backend": "CDN"
-                },
-                asset
-            )
+            content_type = "image/png"
         case "style.css":
             asset = open(f"assets/files/{filename}", "rb")
             asset = asset.read()
-            return web.Response(
-                200,
-                "OK",
-                {
-                    "Content-Type": "text/css",
-                    "Content-Length": len(asset),
-                    "X-Backend": "CDN"
-                },
-                asset
-            )
+            content_type = "text/css"
+
         case _:
             return web.Response(
                 404,
@@ -49,4 +32,10 @@ def cdn_serving(event, request: web.Request, client: web.Client, host: str):
                 {
                     "X-Backend": "CDN"
                 }
+            )
+
+    return web.Response.ok(
+                asset,
+                content_type,
+                {"X-Backend": "CDN"},
             )
