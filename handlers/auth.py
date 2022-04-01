@@ -13,7 +13,7 @@ states = utils.TimeoutList(60)
 def auth_handler(event, request: web.Request, client: web.Client, host: str):
     match request.method, request.path.split("/")[1:], request.query_string:
         case "GET", ["spotify", "authenticate"], _params: 
-            state = choices(ascii_letters, 16)
+            state = choices(ascii_letters, k=16)
             state = "".join(state)  
             states.append(state)         
             return web.Response.redirect(
