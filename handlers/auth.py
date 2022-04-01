@@ -1,19 +1,27 @@
 from urllib.parse import quote
 import pyding
-from lib import web, config
+from lib import web, config, utils
 import logging
+from random import choices
+from string import ascii_letters
+
+
+states = utils.TimeoutList(60)
 
 
 @pyding.on("http_request", host="auth.jaobernardi.space")
 def auth_handler(event, request: web.Request, client: web.Client, host: str):
     match request.method, request.path.split("/")[1:], request.query_string:
-        case "GET", ["spotify", "authenticate"], _params:            
+        case "GET", ["spotify", "authenticate"], _params: 
+            state = choices(ascii_letters, 16)
+            state = "".join(state)  
+            states.append(state)         
             return web.Response.redirect(
-                f"https://accounts.spotify.com/authorize?response_type=code&client_id={config.get_spotify_client_id()}&scope=user-modify-playback-state user-read-currently-playing user-read-playback-state streaming&redirect_uri=https://auth.jaobernardi.space/spotify/callback",
+                f"https://accounts.spotify.com/authorize?state={state}&response_type=code&client_id={config.get_spotify_client_id()}&scope=user-modify-playback-state user-read-currently-playing user-read-playback-state streaming&redirect_uri=https://auth.jaobernardi.space/spotify/callback",
                 {"X-Backend": "Auth"}
             )
 
-        case "GET", ["spotify", "callback"], {"code": code, "state": state, **_params}:
+        case "GET", ["spotify", "callback"], {"code": code, "state": state, **_params} if state in states:
             asset = open(f"assets/spotify/auth_success.html", "rb")
             asset = asset.read()
             content_type = "text/html"
