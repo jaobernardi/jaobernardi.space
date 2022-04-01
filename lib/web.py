@@ -45,7 +45,7 @@ class Client:
             self.close_connection()
             return
 
-        event = pyding.call("http_request", request=data, client=self, first_response=True)
+        event = pyding.call("http_request", request=data, client=self, host=data.headers['Host'] if 'Host' in data.headers else None, first_response=True)
         if event.response:
             pyding.call("http_response", response=event.response, request=data)
             for content in event.response.output():
@@ -72,12 +72,38 @@ class Response:
     --------
     A simple http response parsing.
     """
-    def __init__(self, status_code, status_message, headers={}, data=b" "):
+    def __init__(self, status_code=200, status_message="OK", headers={}, data=b" "):
         self.status_code = status_code
         self.status_message = status_message
         self.headers = headers | {"Server": "jdspace", "Connection": "close"}
         self.data = data        
     
+    @classmethod
+    def redirect(cls, location, headers={}):
+        return cls(
+            301,
+            "Permanent Redirect",
+            headers | {"Location": location}
+        )
+
+    @classmethod
+    def ok(cls, data, content_type, headers={}):
+        return cls(
+            200,
+            "OK",
+            headers | {"Content-Type": content_type, "Content-Length": len(data)},
+            data
+        )
+
+    @classmethod
+    def not_found(cls, data, content_type, headers={}):
+        return cls(
+            404,
+            "Not Found",
+            headers | {"Content-Type": content_type, "Content-Length": len(data)},
+            data
+        )
+
     def output(self):
         head = f"HTTP/1.1 {self.status_code} {self.status_message}".encode("utf-8")
         for header in self.headers:

@@ -14,12 +14,8 @@ def relay_data(url, chunksize=1024):
         yield data
 
 
-@pyding.on("http_request")
-def services_route(event, request: web.Request, client: web.Client):
-    
-    if "Host" not in request.headers or request.headers["Host"] != "services.jaobernardi.space":
-        return
-
+@pyding.on("http_request", host="services.jaobernardi.space")
+def services_route(event, request: web.Request, client: web.Client, host: str):
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
         case "GET", ["twitter", "video", "url", url], head:
             url = unquote(url)

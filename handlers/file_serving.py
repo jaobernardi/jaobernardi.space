@@ -21,11 +21,8 @@ def load_error(code, **kwargs):
     return html_error, len(html_error)
 
 
-@pyding.on("http_request")
-def html_route(event, request: web.Request, client: web.Client, **args):
-    if "Host" not in request.headers or request.headers["Host"] != "jaobernardi.space":
-        return
-
+@pyding.on("http_request", host="jaobernardi.space")
+def html_route(event, request: web.Request, client: web.Client, host: str):
     # Serve files
     
     path = pathlib.Path(config.get_root()) / pathlib.Path(request.path.removeprefix("/"))

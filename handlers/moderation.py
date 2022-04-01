@@ -33,7 +33,7 @@ def client_handover(event: pyding.EventCall, client: web.Client, handler):
 
 
 @pyding.on("http_request", priority=float("inf"))
-def http_request(event, request: web.Request, client: web.Client):
+def http_request(event, request: web.Request, client: web.Client, host: str):
     if not request or not request.method or not request.path or ".." in request.path:
         return web.Response(400, "Bad Request", {"X-Backend": "Moderation"})
 

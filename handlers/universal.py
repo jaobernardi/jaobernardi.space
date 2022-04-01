@@ -12,7 +12,7 @@ service_name = {
 
 
 @pyding.on("http_request", priority=99)
-def universal_files(event, request: web.Request, client: web.Client):
+def universal_files(event, request: web.Request, client: web.Client, host: str):
     # Serving universal files
     filename = request.path.split("/")[-1]
     host = request.headers['Host'] if 'Host' in request.headers else None

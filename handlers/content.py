@@ -11,11 +11,8 @@ service_name = {
 }
 
 
-@pyding.on("http_request", priority=98)
-def cdn_serving(event, request: web.Request, client: web.Client):
-    if "Host" not in request.headers or request.headers["Host"] != "content.jaobernardi.space":
-        return
-
+@pyding.on("http_request", priority=98, host="content.jaobernardi.space")
+def cdn_serving(event, request: web.Request, client: web.Client, host: str):
     # Serving universal files
     filename = request.path.split("/")[-1]
     match filename:
