@@ -5,3 +5,4 @@ legacy_version
 config.json
 www/HPY.html
 *.pem
+local_www
