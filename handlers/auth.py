@@ -17,7 +17,12 @@ def auth_handler(event, request: web.Request, client: web.Client, host: str):
             state = "".join(state)  
             states.append(state)         
             return web.Response.redirect(
-                f"https://accounts.spotify.com/authorize?state={state}&response_type=code&client_id={config.get_spotify_client_id()}&scope=user-modify-playback-state user-read-currently-playing user-read-playback-state streaming&redirect_uri=https://auth.jaobernardi.space/spotify/callback",
+                (f"https://accounts.spotify.com/authorize?"
+                f"state={state}"
+                "&response_type=code"
+                f"&client_id={config.get_spotify_client_id()}"
+                f"&scope=user-read-private user-read-email user-modify-playback-state user-read-currently-playing user-read-playback-state streaming"
+                "&redirect_uri=https://auth.jaobernardi.space/spotify/callback"),
                 {"X-Backend": "Auth"}
             )
 
