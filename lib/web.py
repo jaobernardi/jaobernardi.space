@@ -1,6 +1,4 @@
-from cgitb import handler
 from types import FunctionType, GeneratorType
-from urllib import response
 import pyding
 import socket, ssl
 from threading import Thread
@@ -78,6 +76,14 @@ class Response:
         self.headers = headers | {"Server": "jdspace", "Connection": "close"}
         self.data = data        
     
+    @property
+    def session_id(self):
+        return None
+    
+    def create_session(self, id=None):
+        if not id:
+            
+
     @classmethod
     def redirect(cls, location, headers={}):
         return cls(

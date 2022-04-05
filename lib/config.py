@@ -8,6 +8,15 @@ def get_data():
 def get_otp():
     return get_data()['otp']
 
+def get_database():
+    return get_data()['database']
+
+def get_private_key():
+    return get_data()['private_key']
+
+def get_public_key():
+    return get_data()['public_key']
+
 def get_https_redirect():
     return get_data()['https_redirect']
 
