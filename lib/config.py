@@ -5,6 +5,9 @@ def get_data():
         data = json.load(file)
     return data
 
+def get_otp():
+    return get_data()['otp']
+
 def get_https_redirect():
     return get_data()['https_redirect']
 

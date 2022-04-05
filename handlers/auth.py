@@ -4,15 +4,17 @@ from lib import web, config, utils
 import logging
 from random import choices
 from string import ascii_letters
+from pyotp.totp import TOTP
 
 
 states = utils.TimeoutList(60)
+totp = TOTP(config.get_otp)
 
 
 @pyding.on("http_request", host="auth.jaobernardi.space")
 def auth_handler(event, request: web.Request, client: web.Client, host: str):
     match request.method, request.path.split("/")[1:], request.query_string:
-        case "GET", ["spotify", "authenticate"], _params: 
+        case "GET", ["spotify", "authenticate"], {"otp": otp, **_params} if otp == totp.now():
             state = choices(ascii_letters, k=16)
             state = "".join(state)  
             states.append(state)         
