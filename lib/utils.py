@@ -1,11 +1,17 @@
 import os
 import time
+from string import ascii_letters
+from random import choices
 
 
 def load_handlers():
     for handler in os.listdir("handlers"):
         if handler.endswith(".py"):
             __import__("handlers."+handler.removesuffix(".py"))
+
+
+def random_string(length=16):
+    return "".join(choices(ascii_letters, k=length))
 
 
 class TimeoutList:
