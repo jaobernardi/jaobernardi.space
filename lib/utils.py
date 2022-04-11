@@ -2,6 +2,7 @@ import os
 import time
 from string import ascii_letters
 from random import choices
+import inspect
 
 
 def load_handlers():
@@ -11,7 +12,55 @@ def load_handlers():
 
 
 def random_string(length=16):
-    return "".join(choices(ascii_letters, k=length))
+    charset = ascii_letters + "".join([str(i) for i in range(10)])
+    return "".join(choices(charset, k=length))
+
+
+
+class RequireOneArg:
+    def __init__(self, func):
+        self.func = func
+    
+    def __repr__(self) -> str:
+        return self.func.__repr__()
+
+    def __call__(self, *args, **kwargs):
+        required_args = list(inspect.signature(self.func).parameters)
+        if not args and not kwargs:
+            raise ValueError(f'Missing {" or ".join(required_args)} arguments.')
+            
+        elif not any([i in required_args for i in kwargs]) and kwargs:
+            raise ValueError(f'Required {" or ".join(required_args)} args.')
+        
+        send_args = {k: None for k in required_args} | kwargs
+
+        for value, index in zip(args, range(len(args))):
+            send_args[required_args[index]] = value
+        
+        return self.func(**send_args)
+
+
+class DuplicateKeyDict:
+    def __init__(self):
+        self._store = {}
+
+    def __getitem__(self, name):
+        return self._store[name] if len(self._store[name]) > 1 else self._store[name][0]
+    
+    def __setitem__(self, name, value):
+        if name not in self._store:
+            self._store[name] = []
+        self._store[name].append(value)
+
+    def pop(self, value):
+        return self._store.pop(value)
+
+    def __repr__(self) -> str:
+        items = []
+        for name, values in self._store.items():
+            for value in values:
+                items.append(f'{name!r}: {value!r}')
+        return "{"+(", ".join(items))+"}"
 
 
 class TimeoutList:
