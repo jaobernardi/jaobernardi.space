@@ -34,9 +34,6 @@ tables = [
             PRIMARY KEY(SessionHash),
             FOREIGN KEY(UserUUID) 
                 REFERENCES Users(UUID)
-                ON DELETE CASCADE,
-            FOREIGN KEY(SaltUUID) 
-                REFERENCES Salts(UUID)
                 ON DELETE CASCADE
         )
     """,
