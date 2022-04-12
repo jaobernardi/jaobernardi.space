@@ -1,4 +1,4 @@
-<a href="https://jaobernardi.space"><img src="assets/jdspace.png"></a>
+<a href="https://jaobernardi.space"><img src="assets/images/jdspace.png"></a>
 <hr>
 <p align="center">End-point de convergência de dados.</p>
 <p align="center">
