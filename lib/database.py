@@ -90,7 +90,7 @@ triggers = [
     """
 ]
 
-class DatabaseConnection(object):
+class Database(object):
     def __enter__(self, name='default'):
         self.connection = sqlite3.connect(config.get_database()['default'])
         cursor = self.connection.cursor()
@@ -104,7 +104,7 @@ class DatabaseConnection(object):
 
 
 def setup_tables():
-    with DatabaseConnection() as db:
+    with Database() as db:
         for sql in tables + triggers:
             print(sql)
             db.execute(sql)
@@ -114,26 +114,26 @@ def setup_tables():
 def create_salt(length=32):
     salt = utils.random_string(length)
     uuid = uuid4()
-    with DatabaseConnection() as db:
+    with Database() as db:
         db.execute("INSERT INTO `Salts`(UUID, Salt) VALUES (?, ?)", (str(uuid), salt))
     return salt, uuid
 
 # Get an individual salt
 def get_salt(uuid):
-    with DatabaseConnection() as db:
+    with Database() as db:
         cursor = db.execute("SELECT Salt FROM Salts WHERE UUID = ?", (uuid,))
         return [i for i in cursor][0]
 
 # Get all salts
 def get_salts():
-    with DatabaseConnection() as db:
+    with Database() as db:
         cursor = db.execute("SELECT Salt FROM Salts WHERE 1=1")
         return [i for i in cursor]
 
 # Delete a salt
 def delete_salt(uuid):
     """Warning: Deleting a salt will cascade delete all inserts related to it."""
-    with DatabaseConnection() as db:
+    with Database() as db:
         cursor = db.execute("DELETE FROM Salts WHERE UUID = ?", (uuid,))
 
 # User methods
@@ -147,13 +147,13 @@ def add_user(username, password):
     http_auth = sha256(b64encode(f'{username}:{password}{salt}'.encode())).hexdigest()
     uuid = uuid4()
 
-    with DatabaseConnection() as db:
+    with Database() as db:
         db.execute("INSERT INTO `Users`(UUID, Username, PasswordHash, SaltUUID, HttpAuthHash) VALUES (?, ?, ?, ?, ?)", (str(uuid), username, password_hash, str(salt_uuid), http_auth))
     return uuid, salt_uuid
 
 # Get all users
 def get_users():
-    with DatabaseConnection() as db:
+    with Database() as db:
         query = """
             SELECT
                 u.*,
@@ -195,7 +195,7 @@ def get_users():
 # Get a specific user
 @utils.RequireOneArg
 def get_user(username, uuid):
-    with DatabaseConnection() as db:
+    with Database() as db:
         query = """
             SELECT
                 u.*,
@@ -231,7 +231,7 @@ def get_user(username, uuid):
         return user
 
 def get_user_by_token(token_hash):
-    with DatabaseConnection() as db:
+    with Database() as db:
         cursor = db.execute("""
             SELECT
                 UserUUID
@@ -242,7 +242,7 @@ def get_user_by_token(token_hash):
     return get_user(uuid=user_uuid)
 
 def get_user_by_session(session_hash):
-    with DatabaseConnection() as db:
+    with Database() as db:
         cursor = db.execute("""
             SELECT
                 UserUUID
@@ -253,7 +253,7 @@ def get_user_by_session(session_hash):
     return get_user(uuid=user_uuid)
 
 def get_user_by_spotify(client_id):
-    with DatabaseConnection() as db:
+    with Database() as db:
         cursor = db.execute("""
             SELECT
                 UserUUID
@@ -266,7 +266,7 @@ def get_user_by_spotify(client_id):
 # Delete an user.
 @utils.RequireOneArg
 def delete_user(username, uuid):
-    with DatabaseConnection() as db:
+    with Database() as db:
         db.execute("""
             DELETE FROM Users
             WHERE
@@ -276,5 +276,80 @@ def delete_user(username, uuid):
 def create_session(ipissuer, ttl, user_uuid=None):
     salt, salt_uuid = create_salt()
     session_token = utils.random_string(64)
-    session_hash = session_token+salt
-    session_hash = sha256(session_hash.encode()).hexdigest()
+    session_hash = sha256(session_token.encode()).hexdigest()
+
+    ipissuerhash = sha256((ipissuer+salt).encode()).hexdigest()
+
+    with Database() as db:
+        db.execute("""
+            INSERT INTO Sessions(
+                UserUUID,
+                IPIssuerHash,
+                SessionHash,
+                TTL,
+                SaltUUID
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (user_uuid, ipissuerhash, session_hash, ttl, str(salt_uuid)))
+
+def get_sessions():
+    with Database() as db:
+        cursor = db.execute("""
+            SELECT
+                SessionHash
+            FROM Sessions
+            WHERE 1=1
+        """)
+        return [i for i in cursor]
+
+def get_session(session_hash):
+    with Database() as db:
+        cursor = db.execute("""
+            SELECT
+                SessionHash
+            FROM Sessions
+            WHERE SessionHash = ?
+        """, (session_hash,))
+        return [i for i in cursor]
+
+
+def delete_session(session_hash):
+    with Database() as db:
+        db.execute("""
+            DELETE FROM Sessions WHERE SessionHash = ?           
+        """, (session_hash,))
+
+def edit_user_to_session(session_hash, user_uuid=None):
+    with Database() as db:
+        db.execute("""
+            UPDATE Sessions SET UserUUID = ? WHERE SessionHash = ?
+        """, (user_uuid, session_hash))
+
+# Tokens
+def create_token(user_uuid, ttl):
+    token = utils.random_string(128)
+    token_hash = sha256(token.encode()).hexdigest()
+
+    with Database() as db:
+        db.execute("""
+            INSERT INTO Tokens(
+                TokenHash,
+                UserUUID,
+                TTL
+            )
+            VALUES (?, ?, ?)
+        """,
+        (token_hash, str(user_uuid), ttl))
+
+def get_token(token_hash):
+    with Database() as db:
+        cursor = db.execute("""
+            SELECT 
+                t.TokenHash,
+                t.TTL,
+                u.*
+            FROM Tokens as t
+            LEFT OUTER JOIN Users as u
+                ON u.UUID = t.UserUUID
+        """)
+        return {k[0]: v for k, v in zip(cursor.description, cursor)}
