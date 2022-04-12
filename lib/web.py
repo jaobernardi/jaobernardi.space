@@ -4,7 +4,7 @@ import socket, ssl
 from threading import Thread
 from lib.utils import random_string
 from . import database
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Client:
     """
@@ -81,7 +81,7 @@ class Response:
     
     def create_session(self, id=None, domain=None, path=None):
         if not id:
-            id = database.create_session(datetime.utcnow()+datetime(hour=5))
+            id = database.create_session(datetime.utcnow()+timedelta(hours=5))
         self.add_cookie('SessionID', id, httponly=True, secure=True, domain=domain, path=path, maxage=18000)
         return id
 
@@ -316,7 +316,7 @@ class HTTPServer(Server):
     def handle_connection(self, connection, address):
         # Create the client object and call events
         client = Client(connection, address, self)
-        if not pyding.call("http_client", cancellable=True, blocking=False, client=client).cancelled:
+        if True:
             thread = Thread(target=client.read_data, daemon=True)
             thread.start()
         else:
