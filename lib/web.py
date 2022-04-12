@@ -3,7 +3,8 @@ import pyding
 import socket, ssl
 from threading import Thread
 from lib.utils import random_string
-
+from . import database
+from datetime import datetime
 
 class Client:
     """
@@ -77,14 +78,11 @@ class Response:
         self.data = data
         self.cookies = {}
     
-    @property
-    def session(self):
-        return None
     
     def create_session(self, id=None, domain=None, path=None):
         if not id:
-            id = random_string(32)
-        self.add_cookie('SessionID', id, httponly=True, secure=True, domain=domain, path=path, maxage=12000)
+            id = database.create_session(datetime.utcnow()+datetime(hour=5))
+        self.add_cookie('SessionID', id, httponly=True, secure=True, domain=domain, path=path, maxage=18000)
         return id
 
 
@@ -233,7 +231,12 @@ class Request:
 
         elif b"\r\n\r\n" in self.raw_data:
             self.complete = True
-                
+
+    @property
+    def session(self):
+        if 'SessionID' in self.cookies:
+            return self.cookies['SessionID']
+
     @property
     def cookies(self):
         if "Cookie" in self.headers:

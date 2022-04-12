@@ -30,8 +30,6 @@ tables = [
         CREATE TABLE `Sessions`(
             UserUUID TEXT(36),
             SessionHash LONGTEXT,
-            IPIssuerHash LONGTEXT,
-            SaltUUID TEXT(36),
             TTL DATETIME,
             PRIMARY KEY(SessionHash),
             FOREIGN KEY(UserUUID) 
@@ -273,24 +271,20 @@ def delete_user(username, uuid):
         """ + f"Username = ?" if username else f'UUID = ?', (username or uuid,))
 
 # Session methods
-def create_session(ipissuer, ttl, user_uuid=None):
-    salt, salt_uuid = create_salt()
+def create_session(ttl, user_uuid=None):
     session_token = utils.random_string(64)
     session_hash = sha256(session_token.encode()).hexdigest()
-
-    ipissuerhash = sha256((ipissuer+salt).encode()).hexdigest()
 
     with Database() as db:
         db.execute("""
             INSERT INTO Sessions(
                 UserUUID,
-                IPIssuerHash,
                 SessionHash,
-                TTL,
-                SaltUUID
+                TTL
             )
-            VALUES (?, ?, ?, ?, ?)
-        """, (user_uuid, ipissuerhash, session_hash, ttl, str(salt_uuid)))
+            VALUES (?, ?, ?)
+        """, (user_uuid, session_hash, ttl))
+    return session_token
 
 def get_sessions():
     with Database() as db:
