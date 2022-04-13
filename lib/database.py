@@ -297,11 +297,12 @@ def get_session(session_hash):
     with Database() as db:
         cursor = db.execute("""
             SELECT
-                SessionHash
+                UserUUID,
+                TTL
             FROM Sessions
             WHERE SessionHash = ?
         """, (session_hash,))
-        return [i for i in cursor]
+        return {k[0]: v for k, v in zip(cursor.description, cursor)}[0]
 
 
 def delete_session(session_hash):
@@ -344,3 +345,4 @@ def get_token(token_hash):
                 ON u.UUID = t.UserUUID
         """)
         return {k[0]: v for k, v in zip(cursor.description, cursor)}
+
