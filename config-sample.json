@@ -1,9 +1,22 @@
 {
-    "host": "0.0.0.0",
-    "port": 80,
-    "https": false,
-    "credentials": {
-        "certificate": "",
-        "private_key": ""
-    }
+    "otp": "",
+    "connection_rate": 60,
+    "stream_auth": "",
+    "user_token": "",
+    "web": {
+        "host": "0.0.0.0",
+        "port": 80,
+        "chain": "",
+        "private_key": "",
+        "use_https": false
+    },
+    "https_redirect": false,
+    "https_redirect_settings": {
+        "host": "0.0.0.0",
+        "port": 80,
+        "location": ""
+    },
+    "web_root": "www/",
+    "spotify_client_id": "",
+    "spotify_secret": ""
 }
