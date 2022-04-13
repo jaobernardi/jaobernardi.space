@@ -5,6 +5,7 @@ from threading import Thread
 from lib.utils import random_string
 from . import database
 from datetime import datetime, timedelta
+from hashlib import sha256
 
 class Client:
     """
@@ -235,7 +236,9 @@ class Request:
     @property
     def session(self):
         if 'SessionID' in self.cookies:
-            return self.cookies['SessionID']
+            sess = sha256(self.cookies['SessionID']).hexdigest()
+            return database.get_session(sess), self.cookies['SessionID']
+
 
     @property
     def cookies(self):
@@ -304,7 +307,7 @@ class HTTPServer(Server):
         self.private_key = private_key
         self.chain = chain
         self.use_https = use_https
-        if chain and private_key:
+        if chain and private_key and use_https:
             self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             self.context.load_cert_chain(chain, private_key)
 
