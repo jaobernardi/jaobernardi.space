@@ -73,15 +73,6 @@ triggers = [
         BEGIN
             DELETE FROM Salts WHERE UUID = old.SaltUUID;
         END
-    """,
-    """
-        CREATE TRIGGER IF NOT EXISTS SessionSaltReverseCascadeDelete
-            AFTER DELETE
-                ON Sessions
-            FOR EACH ROW
-        BEGIN
-            DELETE FROM Salts WHERE UUID = old.SaltUUID;
-        END
     """
 ]
 
@@ -302,7 +293,10 @@ def get_session(session_hash):
             FROM Sessions
             WHERE SessionHash = ?
         """, (session_hash,))
-        return {k[0]: v for k, v in zip(cursor.description, cursor)}[0]
+        sessions = [i for i in cursor]
+        if not sessions:
+            return {k[0]: None for k in cursor.description}
+        return {k[0]: v for k, v in zip(cursor.description, sessions[0])}
 
 
 def delete_session(session_hash):
