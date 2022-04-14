@@ -11,6 +11,21 @@
     <div class="centered">
         <div class="middle">
             <python>
+                import sys, traceback
+                from lib import database
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                try:
+                    data, token = request.session
+                    this.echo("p", f"UserUUID: {data['UserUUID']}", {})
+                    this.echo("p", f"TTL: {data['TTL']}", {})
+                    this.echo("p", f"SessionID: {token}", {})
+                    if "destroy" in request.query_string:
+                        response.destroy_session(token)
+                    if "create" in request.query_string:
+                        response.create_session()
+                except Exception as e:
+                    this.echo("p", repr(traceback.format_exc()), {})
+
                 this.echo("img", "", {"src": "https://media1.giphy.com/media/ICOgUNjpvO0PC/giphy.gif"})
             </python>
         </div>
