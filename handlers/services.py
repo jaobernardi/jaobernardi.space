@@ -14,7 +14,7 @@ def relay_data(url, chunksize=1024):
         yield data
 
 
-@pyding.on("http_request", host="services.jaobernardi.space")
+@pyding.on("http_request", host=config.get_hosts()['services']['url'])
 def services_route(event, request: web.Request, client: web.Client, host: str):
     match request.method, request.path.split("/")[1:] if request.path else "", request.headers:
         case "GET", ["twitter", "video", "url", url], head:

@@ -4,11 +4,7 @@ from lib import web, config, html_parsing
 import logging
 
 headers = {"X-Backend": "Universal"}
-service_name = {
-    "api.jaobernardi.space": "API",
-    "services.jaobernardi.space": "Serviços Gerais",
-    "jaobernardi.space": "Home"
-}
+service_name = {k['url']: k['name'] for k in config.get_hosts().values()}
 
 
 @pyding.on("http_request", priority=99)
@@ -43,13 +39,13 @@ def universal_files(event, request: web.Request, client: web.Client, host: str):
                 favicon
             )
         
-        case "jdspace.png" | "archive.png", host if host != "content.jaobernardi.space":
+        case "jdspace.png" | "archive.png", host if host != config.get_hosts()['content']['url']:
 
             return web.Response(
                 301,
                 "Moved Permanently",
                 {
-                    "Location": f"https://content.jaobernardi.space/{filename}",
+                    "Location": f"https://{config.get_hosts()['content']['url']}/{filename}",
                 } | headers,
                 b" "
             )
@@ -79,7 +75,7 @@ def universal_files(event, request: web.Request, client: web.Client, host: str):
                         '<meta name="twitter:card" content="summary" />'
                         '<meta name="twitter:site" content="@jaobernard" />'
                         f'<meta name="twitter:title" content="{service} | JDSpace" />'
-                        '<meta name="twitter:image" content="https://content.jaobernardi.space/jdspace.png" />'
+                        f'<meta name="twitter:image" content="https://{config.get_hosts()["content"]["url"]}/jdspace.png" />'
                     "</head>"
                     "<body>" 
                     "</body>"

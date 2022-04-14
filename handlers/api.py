@@ -16,7 +16,7 @@ def handover_connection(client, request):
 @pyding.on("http_request")
 def api_route(event, request: web.Request, client: web.Client, host: str):
     
-    if "Host" not in request.headers or request.headers["Host"] != "api.jaobernardi.space":
+    if "Host" not in request.headers or request.headers["Host"] != config.get_hosts()['api']['url']:
         return
 
     output = {}

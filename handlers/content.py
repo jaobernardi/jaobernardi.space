@@ -4,14 +4,8 @@ from lib import web, config, html_parsing
 import logging
 
 
-service_name = {
-    "api.jaobernardi.space": "API",
-    "services.jaobernardi.space": "Serviços Gerais",
-    "jaobernardi.space": "Home"
-}
 
-
-@pyding.on("http_request", priority=98, host="content.jaobernardi.space")
+@pyding.on("http_request", priority=98, host=config.get_hosts()['content']['url'])
 def cdn_serving(event, request: web.Request, client: web.Client, host: str):
     # Serving universal files
     filename = request.path.split("/")[-1]
