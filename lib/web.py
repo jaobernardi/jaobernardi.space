@@ -86,6 +86,11 @@ class Response:
         self.add_cookie('SessionID', id, httponly=True, secure=True, domain=domain, path=path, maxage=18000)
         return id
 
+    def destroy_session(self, id=None):
+        if id:
+            sess = sha256(id.encode()).hexdigest()
+            database.delete_session(sess)
+        self.destroy_cookie("SessionID")
 
     def destroy_cookie(self, name):
         """Sends a Set-Cookie header to delete a cookie on client's side.
@@ -135,6 +140,13 @@ class Response:
             } | extra
         }
 
+
+    def update(self, status_code=200, status_message="OK", headers={}, data=b" "):
+        self.status_code = status_code
+        self.status_message = status_message
+        self.headers = headers | {"Server": "jdspace", "Connection": "close"}
+        self.data = data
+        return self
 
     @classmethod
     def redirect(cls, location, headers={}):
@@ -236,9 +248,9 @@ class Request:
     @property
     def session(self):
         if 'SessionID' in self.cookies:
-            sess = sha256(self.cookies['SessionID']).hexdigest()
+            sess = sha256(self.cookies['SessionID'].encode()).hexdigest()
             return database.get_session(sess), self.cookies['SessionID']
-
+        return {"UserUUID": None, "TTL": None}, None
 
     @property
     def cookies(self):
