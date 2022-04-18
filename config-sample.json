@@ -16,8 +16,32 @@
         "port": 80,
         "location": ""
     },
-    "web_root": "www/",
+    "root": "www/",
     "spotify_client_id": "",
     "spotify_secret": "",
-    "hosts": {}
+    "database": {
+        "default": "database/database.sql"
+    },
+    "hosts": {
+        "home": {
+            "url": "jaobernardi.localhost",
+            "name": "Home"
+        },
+        "api": {
+            "url": "api.localhost",
+            "name": "API"
+        },
+        "auth": {
+            "url": "auth.localhost",
+            "name": "Auth"
+        },
+        "content": {
+            "url": "content.localhost",
+            "name": "Content"
+        },
+        "services": {
+            "url": "services.localhost",
+            "name": "Services"
+        }
+    }
 }
