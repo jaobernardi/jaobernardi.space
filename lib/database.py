@@ -73,8 +73,12 @@ triggers = [
         BEGIN
             DELETE FROM Salts WHERE UUID = old.SaltUUID;
         END
+    """,
     """
-]
+        CREATE TRIGGER IF NOT EXISTS TTLChecker
+            BEFORE 
+    """
+]  
 
 class Database(object):
     def __enter__(self, name='default'):
@@ -336,7 +340,16 @@ def get_token(token_hash):
                 u.*
             FROM Tokens as t
             LEFT OUTER JOIN Users as u
-                ON u.UUID = t.UserUUID
+                ON u.UUID = t.UserUUID  
+            WHERE t.TokenHash = ?
         """)
         return {k[0]: v for k, v in zip(cursor.description, cursor)}
 
+def delete_token(token_hash):
+    with Database() as db:
+        db.execute("""
+            DELETE
+                *
+            FROM Tokens
+            WHERE token_hash = ?        
+        """, (token_hash,))
