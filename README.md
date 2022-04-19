@@ -13,3 +13,39 @@
     </a>
 </p>
 <hr><br><br>
+
+## To-do
+- [ ] Database:
+    - [ ] Shared database for @arquivodojao.
+    - [x] Tokens
+    - [x] Sessions
+    - [x] Users
+    - [x] Salts
+- [ ] Backend
+    - [x] HTTP(S) Server
+        - [x] Data relaying 
+    - [x] Request parsing
+    - [x] Response parsing
+    - Handlers:
+        - Services
+            - [ ] Twitter video downloading
+                - [x] By ID
+                - [x] By URL
+        - Default:
+            - [x] File serving
+            - [x] Custom per path behavior (settings file)
+        - Auth:
+            - Third party auths:
+                - [ ] Spotify
+                - [ ] Google
+        - API:
+            - Twitter
+                - [x] Webhooks
+                    - [x] Stream webhook data
+            - Spotify
+                - [ ] Read current song
+                - [ ] Stream spotify data
+        - [x] Content
+        - [x] Filtering
+- [ ] Front-end
+    - [ ] Homepage
