@@ -6,6 +6,7 @@ from lib.utils import random_string
 from . import database
 from datetime import datetime, timedelta
 from hashlib import sha256
+from urllib.parse import unquote
 
 class Client:
     """
@@ -209,6 +210,12 @@ class Request:
         self.raw_data = raw_data
         self.parse_raw_data()
 
+    @staticmethod
+    def parse_query_string(query_string):
+        if isinstance(query_string, bytes):
+            query_string = query_string.decode("utf-8")
+        return {unquote(k): unquote(v) for k, v in [i.split("=") for i in query_string.split("&") if "=" in i]}
+
     def parse_raw_data(self):
         self.method = None
         self.path = None
@@ -228,7 +235,7 @@ class Request:
                 if "?" in other[0] and "=" in other[0]:
                     self.query_string = "?".join(other[0].split("?")[1:])
                                        
-                    self.query_string = {k: v for k, v in [i.split("=") for i in self.query_string.split("&") if "=" in i]}
+                    self.query_string = self.parse_query_string(self.query_string)
 
             elif index > 0:
                 line = line.removesuffix("\r\n").split(": ")
@@ -238,7 +245,10 @@ class Request:
         if "Content-Length" in self.headers and body:
             body = [body] if not isinstance(body, list) else body
             body = b"\r\n\r\n".join(body)
-            self.data = body  
+            if "Content-Type" in self.headers and self.headers['Content-Type'] == 'application/x-www-form-urlencoded':
+                self.data = self.parse_query_string(body)
+            else:
+                self.data = body  
             if len(body) >= int(self.headers["Content-Length"]):
                 self.complete = True
 

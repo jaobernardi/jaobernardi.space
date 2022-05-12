@@ -42,5 +42,16 @@ def auth_handler(event, request: web.Request, client: web.Client, host: str):
 
             return web.Response.ok(asset, content_type, {"X-Backend": "Auth"})
 
+        case "POST", ["users", "session"], _params:
+            response = web.Response()
+            response.create_session(domain="jaobernardi.localhost")
+            return response
+
+        case "GET", ["users", "session"] | ["login"], _params:
+            asset = open(f"assets/pages/login.html", "rb")
+            asset = asset.read()
+            content_type = "text/html"
+
+            return web.Response.ok(asset, content_type, {"X-Backend": "Auth"})
         case _:
             return web.Response(204, "No Content", {"X-Backend": "Auth"})

@@ -1,10 +1,12 @@
 {
     "hidden": ["production.html"],
     "alias": {
-        "beta": "beta.html"
+        "beta": "beta.html",
+        "qrcode": "qrcode.html"
     },
     "require_auth": {
-        "beta.html": "Beta page"
+        "beta.html": "Beta feature",
+        "qrcode.html": "Beta feature"
     },
     "redirect": {
         "titulo": "https://cad-app-titulonet.tse.jus.br/titulonet/novoRequerimento"
