@@ -83,3 +83,10 @@ def setup_tables():
             print(sql)
             db.execute(sql)
 
+# Salts
+def create_salt(length=32):
+    salt = utils.random_string(length)
+    uuid = uuid4()
+    with Database() as db:
+        db.execute("INSERT INTO `Salts`(UUID, Salt) VALUES (?, ?)", (uuid, salt))
+    return salt, uuid
