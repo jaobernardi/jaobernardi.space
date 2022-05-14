@@ -90,3 +90,78 @@ def create_salt(length=32):
     with Database() as db:
         db.execute("INSERT INTO `Salts`(UUID, Salt) VALUES (?, ?)", (uuid, salt))
     return salt, uuid
+
+#Users
+def create_user(username, password, uuid=None):
+    salt, salt_uuid = create_salt()
+    pass_hash = utils.hash(password, salt)
+    uuid = uuid or uuid4()
+
+    with Database() as db:
+        db.execute("INSERT OR REPLACE INTO `Users`(UUID, SaltUUID, Username, PasswordHash, Permissions) VALUES (?, ?, ?, ?, ?)", (uuid, salt_uuid, username, pass_hash, {}))
+    return uuid, salt_uuid, username, pass_hash, {}, salt
+
+
+@utils.RequireOneArg
+def get_user(uuid, username, hash):
+    with Database() as db:
+        if hash:
+            query = f"""
+                SELECT
+                    users.*,
+                    salts.Salt
+                FROM Users as users
+                
+                LEFT OUTER JOIN Salts as salts
+                    ON salts.UUID = users.SaltUUID
+                INNER JOIN Session as session
+                    ON session.SessionHash = ?
+                
+                WHERE users.UUID = session.UserUUID
+                """
+            cursor = db.execute(query, (hash,))
+        else:
+            query = f"""
+                SELECT
+                    users.*,
+                    salts.Salt
+                FROM Users as users
+                
+                LEFT OUTER JOIN Salts as salts
+                    ON salts.UUID = users.SaltUUID
+
+                WHERE {'UUID = ?' if uuid else 'Username = ?'}
+                """
+            cursor = db.execute(query, (uuid or username,))
+
+        data = {}
+        for label, output in zip(cursor.description, cursor.fetchone()):
+            data[label[0]] = output
+        return data
+
+
+@utils.RequireOneArg
+def delete_user(uuid, username):
+    with Database() as db:
+        db.execute(f"DELETE FROM Users WHERE {'UUID = ?' if uuid else 'Username = ?'}", (uuid or username,))
+
+# Sessions
+def create_session(uuid):
+    session = utils.random_string(64)
+    session_hash = utils.hash(session)
+    valid_window = datetime.now()+timedelta(hours=3)
+    with Database() as db:
+        db.execute("INSERT OR REPLACE INTO `Session`(UserUUID, SessionHash, ValidWindow) VALUES (?, ?, ?)", (uuid, session_hash, valid_window))
+    return session_hash
+
+def get_session(uuid):
+    with Database() as db:
+        cursor = db.execute("SELECT * FROM Session WHERE UserUUID = ?", (uuid,))
+        data = {}
+        for label, output in zip(cursor.description, cursor.fetchone()):
+            data[label[0]] = output
+        if data['ValidWindow'] <= time():
+            db.execute("DELETE FROM Session WHERE SessionHash = ?", (data['SessionHash'],))
+            return
+        return data
+
